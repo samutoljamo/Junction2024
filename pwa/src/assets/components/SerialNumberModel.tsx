@@ -13,6 +13,8 @@ import Box from "@mui/joy";
 import { useSelector, useDispatch } from "react-redux";
 import { formSlice } from "../../formSlice";
 import { Option } from "@mui/joy";
+import { useNavigate } from 'react-router-dom';
+
 
 import {
   setEquipmentName,
@@ -31,6 +33,7 @@ import { useUploadImageUploadPostMutation } from "../../store/backend";
 import { useAppSelector } from "../../store";
 
 export default function SerialNumberModel() {
+  const navigate = useNavigate();
   const dispatch = useDispatch();
   const images = useAppSelector((state) => state.form.images);
   const [uploadImage, { data }] = useUploadImageUploadPostMutation();
@@ -58,7 +61,7 @@ export default function SerialNumberModel() {
     <main>
       <Sheet
         sx={{
-          width: "60%",
+          width: "80%",
           mx: "auto", // margin left & right
           my: 4, // margin top & bottom
           py: 3, // padding top & bottom
@@ -197,8 +200,8 @@ export default function SerialNumberModel() {
             onChange={(e) => dispatch(setFreeComment(e.target.value))}
           />
         </FormControl>
-        <ButtonGroup spacing="107.9px" aria-label="spacing button group">
-          <Button onClick={function () {}}>Back</Button>
+        <ButtonGroup spacing="75%" aria-label="spacing button group">
+          <Button onClick={function () {navigate('/map');}}>Back</Button>
           <Button onClick={function () {}} variant="solid" color="primary">
             Continue
           </Button>
