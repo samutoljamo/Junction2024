@@ -111,13 +111,12 @@ class Item(ItemBase):
 
 class ImageUpload(BaseModel):
     image: str
-    visit_id: int
 
 # FastAPI app setup
 app = FastAPI()
 
 client = instructor.from_openai(OpenAI(api_key=os.getenv('OPENAI_API_KEY')))
-model = "gpt-4o"
+model = "gpt-4o-mini"
 
 # Mount the images directory to make it accessible
 app.mount("/images", StaticFiles(directory="images"), name="images")
@@ -306,47 +305,79 @@ async def create_item(item: ItemBase, db: Session = Depends(get_db)):
     db.refresh(db_item)
     return db_item
 
+@app.get("/create_new_item")
+async def create_new_item(db: Session = Depends(get_db)):
+    new_item = ItemDB()
+    db.add(new_item)
+    db.commit()
+    db.refresh(new_item)
+    return new_item
+
+class TestModel(BaseModel):
+    name: str
+    description: str
+
+@app.post("/openaitest/")
+async def openai_test():
+    try:
+        response = client.chat.completions.create(
+            model=model,
+            response_model=TestModel,
+            messages=[
+                {
+                    "role": "system",
+                    "content": "You are a system that always extracts information from images related to KONE devices and other structures.",
+                    "role": "user",
+                    "content": [
+                        {
+                            "type": "text",
+                            "content": "This is a test"
+                        }
+                    ]
+                }
+            ],
+            )
+        print(response)
+        print(response.name)
+        print(response.description)
+        return response
+    except Exception as e:
+        raise HTTPException(status_code=500, detail=f"OpenAI error: {str(e)}")
+
+@app.post("/uploadtest/")
+async def upload_image():
+    try:
+
+        # generate test image and put it to base64 string
+        img = Image.new('RGB', (100, 100), color='red')
+        img_byte_arr = io.BytesIO()
+        img.save(img_byte_arr, format='PNG')
+        img_byte_arr = img_byte_arr.getvalue()
+
+        base64_encoded = base64.b64encode(img_byte_arr).decode()
+
+        # Send the base64 string for processing
+        extracted_item = await extract_item_info_from_image(base64_encoded)
+        print(extracted_item)
+
+        return extracted_item
+
+    except HTTPException as he:
+        raise he
+    except Exception as e:
+        raise HTTPException(status_code=500, detail=f"Server error: {str(e)}")
+
 @app.post("/upload/")
 async def upload_image(payload: ImageUpload, db: Session = Depends(get_db)):
     try:
-        visit = db.query(VisitDB).filter(VisitDB.id == payload.visit_id).first()
-        if not visit:
-            raise HTTPException(status_code=404, detail="visit not found")
-        
-        image_url = await save_image(payload.image)
 
+        #image_url = await save_image(payload.image)
+
+        # extract the item information from the image
         extracted_item = await extract_item_info_from_image(payload.image)
-        if extracted_item.equipment_name: 
-            visit.item.name = extracted_item.equipment_name
-        if extracted_item.manufacturing_year and not visit.item.manufacturing_year:
-            visit.item.manufacturer = extracted_item.manufacturing_year
-        if extracted_item.model and not visit.item.model:
-            visit.item.model = extracted_item.model
-        if extracted_item.serial_number and not visit.item.serial_number:
-            visit.item.serial_number = extracted_item.serial_number
-        if extracted_item.material and not visit.item.material:
-            visit.item.material = extracted_item.material
-
-
-
-        # add the current condition to this visit
-        visit.condition = item.surface_condition
-
         
-        # create a new picture object
-        new_picture = PictureDB(
-            url=image_url,
-            visit_id=payload.visit_id
-        )
-        
-        
-        return {
-            "message": "Image uploaded successfully",
-            "visit_id": visit.id,
-            "picture_id": new_picture.id,
-            "url": image_url
-        }
-        
+        return extracted_item
+               
     except HTTPException as he:
         raise he
     except Exception as e:
