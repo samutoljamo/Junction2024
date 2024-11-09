@@ -1,49 +1,51 @@
-import { createSlice , PayloadAction} from '@reduxjs/toolkit'
+import { createSlice, PayloadAction } from "@reduxjs/toolkit";
 interface FormSlice {
-    images: ({
-        data: string,
-        id: number;
-    })[];
-    equipmentName: string;
-    locationInBuilding: string;
-    manufacturer: string;
-    model: string;
-    serialNumber: string;
-    equipmentType: string;
-    size: string;
-    age: string;
-    typeOfMaterial: string;
-    condition: string;
-    freeComment: string;
+  images: {
+    data: string;
+    id: number;
+  }[];
+  equipmentName: string;
+  locationInBuilding: string;
+  manufacturer: string;
+  model: string;
+  serialNumber: string;
+  equipmentType: string;
+  size: string;
+  typeOfMaterial: string;
+  condition: string;
+  freeComment: string;
+  manufacturingYear: number | null;
 }
 
 const initialState: FormSlice = {
-    images: [],
-    equipmentName: "",
-    locationInBuilding: "",
-    manufacturer: "HögforsGST Oy",
-    model: "GST-4",
-    serialNumber: "513-013485-1",
-    equipmentType: "",
-    size: "",
-    age: "",
-    typeOfMaterial: "",
-    condition: "",
-    freeComment:""
-}
+  images: [],
+  equipmentName: "",
+  locationInBuilding: "",
+  manufacturer: "",
+  manufacturingYear: null,
+  model: "",
+  serialNumber: "",
+  equipmentType: "",
+  size: "",
+  typeOfMaterial: "",
+  condition: "",
+  freeComment: "",
+};
 let id = 0;
 export const formSlice = createSlice({
-  name: 'form',
+  name: "form",
   initialState,
   reducers: {
     addImage: (state, action) => {
       state.images.push({
         data: action.payload,
         id: id++,
-      })
+      });
     },
     removeImage: (state, action) => {
-        state.images = state.images.filter(image => image.id !== action.payload)
+      state.images = state.images.filter(
+        (image) => image.id !== action.payload
+      );
     },
     setEquipmentName: (state, action: PayloadAction<string>) => {
       state.equipmentName = action.payload;
@@ -57,6 +59,9 @@ export const formSlice = createSlice({
     setModel: (state, action: PayloadAction<string>) => {
       state.model = action.payload;
     },
+    setManufacturingYear: (state, action: PayloadAction<number>) => {
+      state.manufacturingYear = action.payload;
+    },
     setSerialNumber: (state, action: PayloadAction<string>) => {
       state.serialNumber = action.payload;
     },
@@ -65,9 +70,6 @@ export const formSlice = createSlice({
     },
     setSize: (state, action: PayloadAction<string>) => {
       state.size = action.payload;
-    },
-    setAge: (state, action: PayloadAction<string>) => {
-      state.age = action.payload;
     },
     setTypeOfMaterial: (state, action: PayloadAction<string>) => {
       state.typeOfMaterial = action.payload;
@@ -79,7 +81,7 @@ export const formSlice = createSlice({
       state.freeComment = action.payload;
     },
   },
-})
+});
 
 // Action creators are generated for each case reducer function
 export const {
@@ -92,10 +94,10 @@ export const {
   setSerialNumber,
   setEquipmentType,
   setSize,
-  setAge,
+  setManufacturingYear,
   setTypeOfMaterial,
   setCondition,
-  setFreeComment
+  setFreeComment,
 } = formSlice.actions;
 
-export default formSlice.reducer
+export default formSlice.reducer;

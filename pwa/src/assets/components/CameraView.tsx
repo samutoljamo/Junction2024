@@ -16,7 +16,7 @@ export default function CameraView() {
       alignItems="center"
       sx={{ width: "100%", mx: "auto", p: 2 }}
     >
-      <Camera ref={camera} errorMessages={{}} aspectRatio={1} />
+      <Camera  facingMode={"environment"} ref={camera} errorMessages={{}} aspectRatio={1} />
       <Typography>Images</Typography>
       <Grid container spacing={1} justifyContent="center">
         {images.map((image, index) => (
@@ -52,6 +52,34 @@ export default function CameraView() {
         Capture Image
       </Button>
       <NavLink to="/map">Next</NavLink>
+      <div>
+      <input type="file" id="fileInput" onChange={()=>{
+        const fileInput:any = document.getElementById('fileInput');
+        const file = fileInput.files[0]; // Get the first file selected
+        if (file) {
+            // Create a new FileReader instance
+            const reader = new FileReader();
+          
+            // Define the onload event for when the file is read
+            reader.onload = function(event:any) {
+              // The result contains the Base64 string
+              const base64String = event.target.result;
+          
+              // Log the Base64 string or use it as needed
+              console.log(base64String);
+              dispatch(addImage(base64String));
+            };
+          
+            // Read the file as a Data URL (Base64 encoded)
+            reader.readAsDataURL(file);
+          } else {
+            alert('Please select a file first!');
+          }
+        
+      }} accept="image/*"/>
+
+      </div>
+      
     </Stack>
   );
 }
