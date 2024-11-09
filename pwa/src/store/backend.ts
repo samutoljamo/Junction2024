@@ -1,12 +1,6 @@
 import { emptySplitApi as api } from "../emptyApi";
 const injectedRtkApi = api.injectEndpoints({
   endpoints: (build) => ({
-    showGalleryGalleryGet: build.query<
-      ShowGalleryGalleryGetApiResponse,
-      ShowGalleryGalleryGetApiArg
-    >({
-      query: () => ({ url: `/gallery` }),
-    }),
     listPicturesApiPicturesGet: build.query<
       ListPicturesApiPicturesGetApiResponse,
       ListPicturesApiPicturesGetApiArg
@@ -19,6 +13,16 @@ const injectedRtkApi = api.injectEndpoints({
     >({
       query: (queryArg) => ({ url: `/api/items/${queryArg.itemId}/pictures` }),
     }),
+    createItemCreateItemPost: build.mutation<
+      CreateItemCreateItemPostApiResponse,
+      CreateItemCreateItemPostApiArg
+    >({
+      query: (queryArg) => ({
+        url: `/create_item`,
+        method: "POST",
+        body: queryArg.itemBase,
+      }),
+    }),
     createItemItemsPost: build.mutation<
       CreateItemItemsPostApiResponse,
       CreateItemItemsPostApiArg
@@ -28,6 +32,18 @@ const injectedRtkApi = api.injectEndpoints({
         method: "POST",
         body: queryArg.itemBase,
       }),
+    }),
+    createNewItemCreateNewItemGet: build.query<
+      CreateNewItemCreateNewItemGetApiResponse,
+      CreateNewItemCreateNewItemGetApiArg
+    >({
+      query: () => ({ url: `/create_new_item` }),
+    }),
+    uploadImageUploadtestPost: build.mutation<
+      UploadImageUploadtestPostApiResponse,
+      UploadImageUploadtestPostApiArg
+    >({
+      query: () => ({ url: `/uploadtest/`, method: "POST" }),
     }),
     uploadImageUploadPost: build.mutation<
       UploadImageUploadPostApiResponse,
@@ -39,24 +55,6 @@ const injectedRtkApi = api.injectEndpoints({
         body: queryArg.imageUpload,
       }),
     }),
-    getItemItemsItemIdGet: build.query<
-      GetItemItemsItemIdGetApiResponse,
-      GetItemItemsItemIdGetApiArg
-    >({
-      query: (queryArg) => ({ url: `/items/${queryArg.itemId}` }),
-    }),
-    testUploadTestUploadPost: build.mutation<
-      TestUploadTestUploadPostApiResponse,
-      TestUploadTestUploadPostApiArg
-    >({
-      query: () => ({ url: `/test/upload/`, method: "POST" }),
-    }),
-    testUploadTestUploadItemIdGet: build.query<
-      TestUploadTestUploadItemIdGetApiResponse,
-      TestUploadTestUploadItemIdGetApiArg
-    >({
-      query: (queryArg) => ({ url: `/test/upload/${queryArg.itemId}` }),
-    }),
     getItemIdsItemIdsGet: build.query<
       GetItemIdsItemIdsGetApiResponse,
       GetItemIdsItemIdsGetApiArg
@@ -67,8 +65,6 @@ const injectedRtkApi = api.injectEndpoints({
   overrideExisting: false,
 });
 export { injectedRtkApi as backend };
-export type ShowGalleryGalleryGetApiResponse = unknown;
-export type ShowGalleryGalleryGetApiArg = void;
 export type ListPicturesApiPicturesGetApiResponse =
   /** status 200 Successful Response */ Picture[];
 export type ListPicturesApiPicturesGetApiArg = void;
@@ -77,28 +73,26 @@ export type GetItemPicturesApiItemsItemIdPicturesGetApiResponse =
 export type GetItemPicturesApiItemsItemIdPicturesGetApiArg = {
   itemId: number;
 };
+export type CreateItemCreateItemPostApiResponse =
+  /** status 200 Successful Response */ any;
+export type CreateItemCreateItemPostApiArg = {
+  itemBase: ItemBase;
+};
 export type CreateItemItemsPostApiResponse =
   /** status 200 Successful Response */ Item;
 export type CreateItemItemsPostApiArg = {
   itemBase: ItemBase;
 };
+export type CreateNewItemCreateNewItemGetApiResponse =
+  /** status 200 Successful Response */ any;
+export type CreateNewItemCreateNewItemGetApiArg = void;
+export type UploadImageUploadtestPostApiResponse =
+  /** status 200 Successful Response */ any;
+export type UploadImageUploadtestPostApiArg = void;
 export type UploadImageUploadPostApiResponse =
   /** status 200 Successful Response */ any;
 export type UploadImageUploadPostApiArg = {
   imageUpload: ImageUpload;
-};
-export type GetItemItemsItemIdGetApiResponse =
-  /** status 200 Successful Response */ Item;
-export type GetItemItemsItemIdGetApiArg = {
-  itemId: number;
-};
-export type TestUploadTestUploadPostApiResponse =
-  /** status 200 Successful Response */ any;
-export type TestUploadTestUploadPostApiArg = void;
-export type TestUploadTestUploadItemIdGetApiResponse =
-  /** status 200 Successful Response */ any;
-export type TestUploadTestUploadItemIdGetApiArg = {
-  itemId: number;
 };
 export type GetItemIdsItemIdsGetApiResponse =
   /** status 200 Successful Response */ any;
@@ -117,29 +111,26 @@ export type ValidationError = {
 export type HttpValidationError = {
   detail?: ValidationError[];
 };
-export type Item = {
-  name: string;
-  description?: string | null;
-  id: number;
-  created_at: string;
-  pictures?: Picture[];
-};
 export type ItemBase = {
   name: string;
   description?: string | null;
 };
+export type Item = {
+  name: string;
+  description?: string | null;
+  id: number;
+  pictures?: Picture[];
+};
 export type ImageUpload = {
   image: string;
-  visit_id: number;
 };
 export const {
-  useShowGalleryGalleryGetQuery,
   useListPicturesApiPicturesGetQuery,
   useGetItemPicturesApiItemsItemIdPicturesGetQuery,
+  useCreateItemCreateItemPostMutation,
   useCreateItemItemsPostMutation,
+  useCreateNewItemCreateNewItemGetQuery,
+  useUploadImageUploadtestPostMutation,
   useUploadImageUploadPostMutation,
-  useGetItemItemsItemIdGetQuery,
-  useTestUploadTestUploadPostMutation,
-  useTestUploadTestUploadItemIdGetQuery,
   useGetItemIdsItemIdsGetQuery,
 } = injectedRtkApi;

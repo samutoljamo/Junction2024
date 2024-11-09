@@ -1,58 +1,73 @@
-import * as React from 'react';
-import { useColorScheme } from '@mui/joy/styles';
-import Sheet from '@mui/joy/Sheet';
-import Typography from '@mui/joy/Typography';
-import FormControl from '@mui/joy/FormControl';
-import FormLabel from '@mui/joy/FormLabel';
-import Input from '@mui/joy/Input';
-import Button from '@mui/joy/Button';
-import Link from '@mui/joy/Link';
-import { ButtonGroup, Select } from '@mui/joy';
-import Textarea from '@mui/joy/Textarea';
-import Box from '@mui/joy';
-import { useSelector, useDispatch } from 'react-redux'
-import { formSlice } from '../../formSlice';
-import { Option } from '@mui/joy';
+import * as React from "react";
+import { useColorScheme } from "@mui/joy/styles";
+import Sheet from "@mui/joy/Sheet";
+import Typography from "@mui/joy/Typography";
+import FormControl from "@mui/joy/FormControl";
+import FormLabel from "@mui/joy/FormLabel";
+import Input from "@mui/joy/Input";
+import Button from "@mui/joy/Button";
+import Link from "@mui/joy/Link";
+import { ButtonGroup, Select } from "@mui/joy";
+import Textarea from "@mui/joy/Textarea";
+import Box from "@mui/joy";
+import { useSelector, useDispatch } from "react-redux";
+import { formSlice } from "../../formSlice";
+import { Option } from "@mui/joy";
 
 import {
-    setEquipmentName,
-    setLocationInBuilding,
-    setManufacturer,
-    setModel,
-    setSerialNumber,
-    setEquipmentType,
-    setSize,
-    setAge,
-    setTypeOfMaterial,
-    setCondition,
-    setFreeComment
-  } from '../../formSlice';
+  setEquipmentName,
+  setLocationInBuilding,
+  setManufacturer,
+  setModel,
+  setSerialNumber,
+  setEquipmentType,
+  setSize,
+  setAge,
+  setTypeOfMaterial,
+  setCondition,
+  setFreeComment,
+} from "../../formSlice";
+import { useUploadImageUploadPostMutation } from "../../store/backend";
+import { useAppSelector } from "../../store";
 
 export default function SerialNumberModel() {
-
-const dispatch = useDispatch();
-function handleSelectChange(event:any) {
-
+  const dispatch = useDispatch();
+  const images = useAppSelector((state) => state.form.images);
+  const [uploadImage, { data }] = useUploadImageUploadPostMutation();
+  function handleSelectChange(event: any) {
     // if you want to support some really old IEs, add
     // event = event || window.event;
-  
-}
-// Get the form values from the Redux store
-let form = useSelector((state:any) => state.form);
+  }
+
+  React.useEffect(() => {
+    if (images.length > 0) {
+      uploadImage({
+        imageUpload: {
+          image: images[0].data,
+        },
+      });
+    }
+  }, []);
+
+  React.useEffect(() => {
+    console.log(data);
+  }, [data]);
+  // Get the form values from the Redux store
+  let form = useSelector((state: any) => state.form);
   return (
     <main>
       <Sheet
         sx={{
-          width: '60%',
-          mx: 'auto', // margin left & right
+          width: "60%",
+          mx: "auto", // margin left & right
           my: 4, // margin top & bottom
           py: 3, // padding top & bottom
           px: 2, // padding left & right
-          display: 'flex',
-          flexDirection: 'column',
+          display: "flex",
+          flexDirection: "column",
           gap: 2,
-          borderRadius: 'sm',
-          boxShadow: 'md',
+          borderRadius: "sm",
+          boxShadow: "md",
         }}
         variant="outlined"
       >
@@ -60,7 +75,9 @@ let form = useSelector((state:any) => state.form);
           <Typography level="h4" component="h1">
             <b>Device information</b>
           </Typography>
-          <Typography level="body-sm">Verify the information collected from image.</Typography>
+          <Typography level="body-sm">
+            Verify the information collected from image.
+          </Typography>
         </div>
         <FormControl>
           <FormLabel>Serial Number</FormLabel>
@@ -115,16 +132,16 @@ let form = useSelector((state:any) => state.form);
         <FormControl>
           <FormLabel>Equipment Type</FormLabel>
           <Select
-                name="equipmentType"
-                value={form.equipmentType}
-                onChange={(event, newValue) => dispatch(setEquipmentType(newValue))}
-                >
-                <Option value="structure">Structure</Option>
-                <Option value="ventilation">Ventilation</Option>
-                <Option value="electrical">Electrical</Option>
-                <Option value="plumbing">Plumbing</Option>
-                <Option value="other">Other</Option>
-                </Select>
+            name="equipmentType"
+            value={form.equipmentType}
+            onChange={(event, newValue) => dispatch(setEquipmentType(newValue))}
+          >
+            <Option value="structure">Structure</Option>
+            <Option value="ventilation">Ventilation</Option>
+            <Option value="electrical">Electrical</Option>
+            <Option value="plumbing">Plumbing</Option>
+            <Option value="other">Other</Option>
+          </Select>
         </FormControl>
 
         <FormControl>
@@ -181,8 +198,10 @@ let form = useSelector((state:any) => state.form);
           />
         </FormControl>
         <ButtonGroup spacing="107.9px" aria-label="spacing button group">
-        <Button onClick={function(){}}  >Back</Button>
-        <Button onClick={function(){}} variant="solid" color="primary" >Continue</Button>
+          <Button onClick={function () {}}>Back</Button>
+          <Button onClick={function () {}} variant="solid" color="primary">
+            Continue
+          </Button>
         </ButtonGroup>
       </Sheet>
     </main>
