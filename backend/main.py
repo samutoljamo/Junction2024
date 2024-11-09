@@ -19,95 +19,17 @@ from datetime import datetime
 import time
 import uuid
 
+from models import *
+
 # Database setup
 SQLALCHEMY_DATABASE_URL = "sqlite:///./items.db"
 engine = create_engine(SQLALCHEMY_DATABASE_URL, connect_args={"check_same_thread": False})
 SessionLocal = sessionmaker(autocommit=False, autoflush=False, bind=engine)
-Base = declarative_base()
 
 load_dotenv()
 
-# SQLAlchemy Models
-class Building(Base):
-    __tablename__ = 'buildings'
-    id = Column(Integer, primary_key=True)
-    location = Column(String)
-
-    items = relationship('Item', back_populates='building')
-
-class ItemType(Base):
-    __tablename__ = 'item_types'
-    id = Column(Integer, primary_key=True)
-    name = Column(String, unique=True)
-
-    items = relationship('Item', back_populates='type')
-
-class ItemDB(Base):
-    __tablename__ = "items"
-    
-    id = Column(Integer, primary_key=True, index=True)
-    name = Column(String)
-    x = Column(Integer)
-    y = Column(Integer)
-    floor = Column(Integer)
-    serial_number = Column(String, nullable=True)
-    material = Column(String, nullable=True)
-    model = Column(String, nullable=True)
-    manufacturer = Column(String, nullable=True)
-    description = Column(String, nullable=True) # this could be updated based on visits
-    manufacturing_year = Column(Integer, nullable=True)
-    
-    building_id = Column(Integer, ForeignKey('buildings.id'))
-    building = relationship('Building', back_populates='items')
-    type = relationship('ItemType', back_populates='items')
-    visits = relationship("VisitDB", back_populates="item", cascade="all, delete-orphan")
-
-
-class VisitDB(Base):
-    __tablename__ = "visits"
-    id = Column(Integer, primary_key=True, index=True)
-    timestamp = Column(Integer, default=time.time())
-    condition = Column(String)
-    notes = Column(String)
-    item_id = Column(Integer, ForeignKey("items.id"))
-
-    item = relationship('Item', back_populates='visits')
-    pictures = relationship('Picture', back_populates='visit')
-
-class PictureDB(Base):
-    __tablename__ = "pictures"
-    
-    id = Column(Integer, primary_key=True, index=True)
-    url = Column(String)
-    visit_id = Column(Integer, ForeignKey("visits.id"))
-    
-    visit = relationship('VisitDB', back_populates='pictures')
-
 # Create tables
 Base.metadata.create_all(bind=engine)
-
-# Pydantic models
-class PictureBase(BaseModel):
-    url: str
-
-class Picture(PictureBase):
-    id: int
-    item_id: int
-    created_at: datetime
-    
-    class Config:
-        from_attributes = True
-
-class ItemBase(BaseModel):
-    name: str
-    description: Optional[str] = None
-
-class Item(ItemBase):
-    id: int
-    pictures: List[Picture] = []
-    
-    class Config:
-        from_attributes = True
 
 class ImageUpload(BaseModel):
     images: List[str]
@@ -156,7 +78,7 @@ async def save_image(base64_str: str) -> str:
         raise HTTPException(status_code=400, detail=f"Invalid image data: {str(e)}")
 
 #Pydantic models for ai analysis
-class ItemType(Enum):
+class ItemTypeCategory(Enum):
     # all the categories that the KONE company has
     structure = "structure"
     ventilation = "ventilation"
@@ -167,7 +89,7 @@ class ItemType(Enum):
 
 class ItemStructure(BaseModel):
     equipment_name: Optional[str] = Field(description="The name of the equipment", default="")
-    equipment_type: ItemType = Field(description="Type of the item", default=ItemType.other)
+    equipment_type: ItemTypeCategory = Field(description="Type of the item", default=ItemTypeCategory.other)
     manufacturer: Optional[str] = Field(description="The manufacturer of the item", default=None)
     manufacturing_year: Optional[int] = Field(description="The manufacturing year of the item", default=None)
     model: Optional[str] = Field(description="The model of the item", default=None)
@@ -218,15 +140,66 @@ async def extract_item_info_from_images(base64_str_images: list[str]) -> ItemStr
         raise HTTPException(status_code=500, detail=f"Vision API error: {str(e)}")
 
 
-@app.get("/api/pictures", response_model=List[Picture])
-async def list_pictures(db: Session = Depends(get_db)):
-    pictures = db.query(PictureDB).all()
-    return pictures
-
-@app.get("/api/items/{item_id}/pictures", response_model=List[Picture])
-async def get_item_pictures(item_id: int, db: Session = Depends(get_db)):
-    pictures = db.query(PictureDB).filter(PictureDB.item_id == item_id).all()
-    return pictures
+# Endpoint that returns the hardcoded item data
+@app.get("/item", response_model=ItemBase)
+def get_item():
+    example_item = ItemDB(
+        id=1,
+        name="Grand Piano",
+        x=15,
+        y=30,
+        floor=2,
+        serial_number="GP-12345",
+        material="Wood",
+        model="G-Series",
+        manufacturer="Yamaha",
+        description="A classic grand piano in excellent condition.",
+        manufacturing_year=2010,
+        building=BuildingDB(
+            id=1,
+            location="Concert Hall",
+        ),
+        type=ItemType(
+            id=1,
+            name="Musical Instrument"
+        ),
+        visits=[
+            VisitDB(
+                id=1,
+                timestamp=int(time.time()),
+                condition="Good",
+                notes="No visible damage.",
+                item_id=1,
+                pictures=[
+                    PictureDB(
+                        id=1,
+                        url="http://example.com/piano1.jpg",
+                        visit_id=1
+                    ),
+                    PictureDB(
+                        id=2,
+                        url="http://example.com/piano2.jpg",
+                        visit_id=1
+                    )
+                ]
+            ),
+            VisitDB(
+                id=2,
+                timestamp=int(time.time()),
+                condition="Needs Tuning",
+                notes="Sound is slightly off-key.",
+                item_id=1,
+                pictures=[
+                    PictureDB(
+                        id=3,
+                        url="http://example.com/piano3.jpg",
+                        visit_id=2
+                    )
+                ]
+            )
+        ]
+    )
+    return example_item
 
 @app.post("/create_item")
 async def create_item(item: ItemBase, db: Session = Depends(get_db)):
@@ -236,7 +209,7 @@ async def create_item(item: ItemBase, db: Session = Depends(get_db)):
     db.refresh(new_item)
     return new_item
 
-@app.post("/items/", response_model=Item)
+@app.post("/items/", response_model=ItemBase)
 async def create_item(item: ItemBase, db: Session = Depends(get_db)):
     db_item = ItemDB(**item.dict())
     db.add(db_item)

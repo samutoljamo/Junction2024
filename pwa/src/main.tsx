@@ -30,7 +30,7 @@ ReactDOM.createRoot(document.getElementById('root')!).render(
           <Route path="/confirmcondition" element={<ConfirmCondition />}/>
           <Route path="/camera" element={<CameraView />}/>
         </Routes>
-        <Bottombar />
+        {/* <Bottombar /> */}
       </Router>
       </Provider>
   </React.StrictMode>,
