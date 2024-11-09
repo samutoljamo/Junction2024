@@ -14,6 +14,8 @@ import { useSelector, useDispatch } from "react-redux";
 import { formSlice } from "../../formSlice";
 import { Option } from "@mui/joy";
 import { useNavigate } from 'react-router-dom';
+import CircularProgress from '@mui/joy/CircularProgress';
+import Stack from '@mui/joy/Stack';
 
 
 import {
@@ -37,15 +39,11 @@ export default function SerialNumberModel() {
   const navigate = useNavigate();
   const dispatch = useDispatch();
   const images = useAppSelector((state) => state.form.images);
-  function handleSelectChange(event: any) {
-    // if you want to support some really old IEs, add
-    // event = event || window.event;
-  }
 
-  const formFill = useFormFill();
+  const {fillForm,isLoading} = useFormFill();
 
   React.useEffect(() => {
-    formFill();
+    fillForm();
   }, []);
   // Get the form values from the Redux store
   let form = useAppSelector((state) => state.form);
@@ -68,12 +66,30 @@ export default function SerialNumberModel() {
         variant="outlined"
       >
         <div>
-          <Typography level="h4" component="h1">
-            <b>Device information</b>
-          </Typography>
-          <Typography level="body-sm">
-            Verify the information collected from image.
-          </Typography>
+        {isLoading ? (
+                <Stack
+                direction="row"
+                spacing={2}
+                >
+                    <CircularProgress/>
+                    <Typography level="h4" component="h1">
+                <b>Processing image</b>
+            </Typography>
+                    
+                </Stack>
+         ) : (
+        <>        
+                <Typography level="h4" component="h1">
+                <b>Device information</b>
+            </Typography>
+            
+            <Typography level="body-sm">
+                Verify the information collected from image.
+            </Typography></>
+         )}
+       
+            
+  
         </div>
         <FormControl>
           <FormLabel>Serial Number</FormLabel>
@@ -195,10 +211,10 @@ export default function SerialNumberModel() {
             onChange={(e) => dispatch(setFreeComment(e.target.value))}
           />
         </FormControl>
-        <ButtonGroup spacing="75%" aria-label="spacing button group">
+        <ButtonGroup spacing="9.5rem" aria-label="spacing button group">
           <Button onClick={function () {navigate('/map');}}>Back</Button>
           <Button onClick={function () {}} variant="solid" color="primary">
-            Continue
+            Add device
           </Button>
         </ButtonGroup>
       </Sheet>
