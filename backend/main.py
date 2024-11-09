@@ -103,7 +103,6 @@ class ItemBase(BaseModel):
 
 class Item(ItemBase):
     id: int
-    created_at: datetime
     pictures: List[Picture] = []
     
     class Config:
@@ -197,96 +196,6 @@ async def extract_item_info_from_image(base64_str: str) -> ItemStructure:
         raise HTTPException(status_code=500, detail=f"Vision API error: {str(e)}")
 
 
-@app.get("/gallery", response_class=HTMLResponse)
-async def show_gallery(db: Session = Depends(get_db)):
-    # Get all items with their pictures
-    items = db.query(ItemDB).all()
-    
-    # Create HTML content
-    html_content = """
-    <!DOCTYPE html>
-    <html>
-    <head>
-        <title>Image Gallery</title>
-        <style>
-            body {
-                font-family: Arial, sans-serif;
-                margin: 20px;
-                background-color: #f0f0f0;
-            }
-            .item {
-                background: white;
-                padding: 20px;
-                margin-bottom: 20px;
-                border-radius: 8px;
-                box-shadow: 0 2px 4px rgba(0,0,0,0.1);
-            }
-            .item-header {
-                margin-bottom: 10px;
-                padding-bottom: 10px;
-                border-bottom: 1px solid #eee;
-            }
-            .pictures-grid {
-                display: grid;
-                grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
-                gap: 20px;
-                padding: 10px;
-            }
-            .picture-card {
-                background: white;
-                padding: 10px;
-                border-radius: 4px;
-                box-shadow: 0 1px 3px rgba(0,0,0,0.1);
-            }
-            .picture-card img {
-                width: 100%;
-                height: 200px;
-                object-fit: cover;
-                border-radius: 4px;
-            }
-            .picture-info {
-                margin-top: 8px;
-                font-size: 0.9em;
-                color: #666;
-            }
-        </style>
-    </head>
-    <body>
-    """
-    
-    for item in items:
-        html_content += f"""
-        <div class="item">
-            <div class="item-header">
-                <h2>{item.name} - {item.id}</h2>
-                <p>{item.description or ''}</p>
-            </div>
-            <div class="pictures-grid">
-        """
-        
-        for picture in item.pictures:
-            html_content += f"""
-                <div class="picture-card">
-                    <img src="{picture.url}" alt="Picture for {item.name}">
-                    <div class="picture-info">
-                        Added: {picture.created_at.strftime('%Y-%m-%d %H:%M')}
-                    </div>
-                </div>
-            """
-        
-        html_content += """
-            </div>
-        </div>
-        """
-    
-    html_content += """
-    <a href="/test/upload/1">Upload Test Image</a>
-    </body>
-    </html>
-    """
-    
-    return html_content
-
 @app.get("/api/pictures", response_model=List[Picture])
 async def list_pictures(db: Session = Depends(get_db)):
     pictures = db.query(PictureDB).all()
@@ -296,6 +205,14 @@ async def list_pictures(db: Session = Depends(get_db)):
 async def get_item_pictures(item_id: int, db: Session = Depends(get_db)):
     pictures = db.query(PictureDB).filter(PictureDB.item_id == item_id).all()
     return pictures
+
+@app.post("/create_item")
+async def create_item(item: ItemBase, db: Session = Depends(get_db)):
+    new_item = ItemDB(**item.dict())
+    db.add(new_item)
+    db.commit()
+    db.refresh(new_item)
+    return new_item
 
 @app.post("/items/", response_model=Item)
 async def create_item(item: ItemBase, db: Session = Depends(get_db)):
@@ -316,33 +233,6 @@ async def create_new_item(db: Session = Depends(get_db)):
 class TestModel(BaseModel):
     name: str
     description: str
-
-@app.post("/openaitest/")
-async def openai_test():
-    try:
-        response = client.chat.completions.create(
-            model=model,
-            response_model=TestModel,
-            messages=[
-                {
-                    "role": "system",
-                    "content": "You are a system that always extracts information from images related to KONE devices and other structures.",
-                    "role": "user",
-                    "content": [
-                        {
-                            "type": "text",
-                            "content": "This is a test"
-                        }
-                    ]
-                }
-            ],
-            )
-        print(response)
-        print(response.name)
-        print(response.description)
-        return response
-    except Exception as e:
-        raise HTTPException(status_code=500, detail=f"OpenAI error: {str(e)}")
 
 @app.post("/uploadtest/")
 async def upload_image():
@@ -383,79 +273,6 @@ async def upload_image(payload: ImageUpload, db: Session = Depends(get_db)):
     except Exception as e:
         raise HTTPException(status_code=500, detail=f"Server error: {str(e)}")
 
-@app.get("/items/{item_id}", response_model=Item)
-async def get_item(item_id: int, db: Session = Depends(get_db)):
-    item = db.query(ItemDB).filter(ItemDB.id == item_id).first()
-    if item is None:
-        raise HTTPException(status_code=404, detail="Item not found")
-    return item
-
-# Test route
-@app.post("/test/upload/")
-async def test_upload(db: Session = Depends(get_db)):
-    try:
-        test_item = ItemDB(name="Test Item", description="Test Description")
-        db.add(test_item)
-        db.commit()
-        db.refresh(test_item)
-        
-        img = Image.new('RGB', (100, 100), color='red')
-        img_byte_arr = io.BytesIO()
-        img.save(img_byte_arr, format='PNG')
-        img_byte_arr = img_byte_arr.getvalue()
-        
-        base64_encoded = base64.b64encode(img_byte_arr).decode()
-        
-        image_url = await save_image(base64_encoded)
-        
-        new_picture = PictureDB(
-            url=image_url,
-            item_id=test_item.id
-        )
-        
-        db.add(new_picture)
-        db.commit()
-        db.refresh(new_picture)
-        
-        return {
-            "message": "Test completed successfully",
-            "item_id": test_item.id,
-            "picture_id": new_picture.id,
-            "url": image_url
-        }
-        
-    except Exception as e:
-        raise HTTPException(status_code=500, detail=f"Test failed: {str(e)}")
-
-# upload new test image to item number test route
-@app.get("/test/upload/{item_id}")
-async def test_upload(item_id: int, db: Session = Depends(get_db)):
-    try:
-        test_item = db.query(ItemDB).filter(ItemDB.id == item_id).first()
-        if not test_item:
-            raise HTTPException(status_code=404, detail="Item not found")
-        
-        img = Image.new('RGB', (100, 100), color='blue')
-        img_byte_arr = io.BytesIO()
-        img.save(img_byte_arr, format='PNG')
-        img_byte_arr = img_byte_arr.getvalue()
-        
-        base64_encoded = base64.b64encode(img_byte_arr).decode()
-        
-        image_url = await save_image(base64_encoded)
-        
-        new_picture = PictureDB(
-            url=image_url,
-            item_id=test_item.id
-        )
-        
-        db.add(new_picture)
-        db.commit()
-        db.refresh(new_picture)
-        return RedirectResponse(url="/gallery")
-        
-    except Exception as e:
-        raise HTTPException(status_code=500, detail=f"Test failed: {str(e)}")
 
 @app.get("/item_ids")
 async def get_item_ids(db: Session = Depends(get_db)):
