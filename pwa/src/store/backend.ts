@@ -87,10 +87,10 @@ export type CreateNewItemCreateNewItemGetApiResponse =
   /** status 200 Successful Response */ any;
 export type CreateNewItemCreateNewItemGetApiArg = void;
 export type UploadImageUploadtestPostApiResponse =
-  /** status 200 Successful Response */ any;
+  /** status 200 Successful Response */ ItemStructure;
 export type UploadImageUploadtestPostApiArg = void;
 export type UploadImageUploadPostApiResponse =
-  /** status 200 Successful Response */ any;
+  /** status 200 Successful Response */ ItemStructure;
 export type UploadImageUploadPostApiArg = {
   imageUpload: ImageUpload;
 };
@@ -121,8 +121,32 @@ export type Item = {
   id: number;
   pictures?: Picture[];
 };
+export type ItemType =
+  | "structure"
+  | "ventilation"
+  | "electrical"
+  | "plumbing"
+  | "other";
+export type ItemStructure = {
+  /** The name of the equipment */
+  equipment_name?: string | null;
+  /** Type of the item */
+  equipment_type?: ItemType;
+  /** The manufacturer of the item */
+  manufacturer?: string | null;
+  /** The manufacturing year of the item */
+  manufacturing_year?: number | null;
+  /** The model of the item */
+  model?: string | null;
+  /** The serial number of the device if found */
+  serial_number?: string | null;
+  /** The material of the item */
+  material?: string | null;
+  /** The surface condition of the item */
+  surface_condition?: string | null;
+};
 export type ImageUpload = {
-  image: string;
+  images: string[];
 };
 export const {
   useListPicturesApiPicturesGetQuery,

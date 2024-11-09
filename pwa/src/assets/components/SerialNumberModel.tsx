@@ -24,39 +24,32 @@ import {
   setSerialNumber,
   setEquipmentType,
   setSize,
-  setAge,
+  setManufacturingYear,
   setTypeOfMaterial,
   setCondition,
   setFreeComment,
 } from "../../formSlice";
 import { useUploadImageUploadPostMutation } from "../../store/backend";
 import { useAppSelector } from "../../store";
+import { useFormFill } from "../../hooks";
 
 export default function SerialNumberModel() {
   const navigate = useNavigate();
   const dispatch = useDispatch();
   const images = useAppSelector((state) => state.form.images);
-  const [uploadImage, { data }] = useUploadImageUploadPostMutation();
   function handleSelectChange(event: any) {
     // if you want to support some really old IEs, add
     // event = event || window.event;
   }
 
-  React.useEffect(() => {
-    if (images.length > 0) {
-      uploadImage({
-        imageUpload: {
-          image: images[0].data,
-        },
-      });
-    }
-  }, []);
+  const formFill = useFormFill();
 
   React.useEffect(() => {
-    console.log(data);
-  }, [data]);
+    formFill();
+  }, []);
   // Get the form values from the Redux store
-  let form = useSelector((state: any) => state.form);
+  let form = useAppSelector((state) => state.form);
+  console.log(form.equipmentName);
   return (
     <main>
       <Sheet
@@ -158,12 +151,14 @@ export default function SerialNumberModel() {
         </FormControl>
 
         <FormControl>
-          <FormLabel>Age</FormLabel>
+          <FormLabel>Manufacturing Year</FormLabel>
           <Input
             name="age"
             type="number"
             value={form.age}
-            onChange={(e) => dispatch(setAge(e.target.value))}
+            onChange={(e) =>
+              dispatch(setManufacturingYear(e.target.valueAsNumber))
+            }
           />
         </FormControl>
 
