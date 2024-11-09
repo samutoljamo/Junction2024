@@ -69,9 +69,29 @@ export default function Root() {
       <Typography level="h4" sx={{ marginTop: 1 }}>
         Kaapelitehdas
       </Typography>
-      <Typography sx={{ marginBottom: 0 }}>
-        Click the red dots(Items) or add a new device
-      </Typography>
+      <Box sx={{ display: 'flex', gap: 1, padding: 2, flexDirection: 'column' }}>
+        <Box sx={{ display: 'flex', alignItems: 'center', gap: 1 }}>
+          <Box 
+            sx={{ 
+              width: 12,
+              height: 12,
+              borderRadius: '50%',
+              backgroundColor: 'rgb(60, 72, 201)',
+            }} 
+          />
+        <Typography>Your Location</Typography>
+      </Box>
+      <Box sx={{ display: 'flex', alignItems: 'center', gap: 1 }}>
+        <Box 
+          sx={{ 
+            width: 12,
+            height: 12,
+            backgroundColor: 'rgba(255, 0, 0, 0.5)',
+          }} 
+        />
+        <Typography>Device (clickable)</Typography>
+        </Box>
+      </Box>
       <div style={{ position: "relative", display: "inline-block" }}
       onClick={() => {
         if (menuAnchorEl) {
