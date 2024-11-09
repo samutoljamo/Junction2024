@@ -39,6 +39,9 @@ importers:
       '@thatopen/ui':
         specifier: ^2.3.1
         version: 2.3.1
+      icons-joy:
+        specifier: link:@mui/icons-joy
+        version: link:@mui/icons-joy
       react:
         specifier: ^18.3.1
         version: 18.3.1
