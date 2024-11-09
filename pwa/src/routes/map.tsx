@@ -56,7 +56,13 @@ export default function Root() {
       <Typography sx={{ marginBottom: 0 }}>
         Click the red dots(Items) or add a new device
       </Typography>
-      <div style={{ position: "relative", display: "inline-block" }}>
+      <div style={{ position: "relative", display: "inline-block" }}
+      onClick={() => {
+        if (menuAnchorEl) {
+          handleMenuClose();
+        }}}
+        >
+
         <img
           ref={imageRef}
           src={map_image}
@@ -117,6 +123,7 @@ export default function Root() {
             Replace device
           </MenuItem>
         </Menu>
+          
       </div>
       <Button
         onClick={() => {
