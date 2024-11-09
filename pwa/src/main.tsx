@@ -2,6 +2,7 @@ import React from 'react'
 import ReactDOM from 'react-dom/client'
 import Root from "./routes/root"
 import Map from "./routes/map"
+import Bottombar from './routes/bottom-bar'
 
 
 import { BrowserRouter as Router, Routes, Route, NavLink } from 'react-router-dom';
@@ -15,6 +16,7 @@ ReactDOM.createRoot(document.getElementById('root')!).render(
         <Routes>
           <Route path="/" element={<Root />} />
           <Route path="/map" element={<Map />} />
+          <Route path="/bottombar" element={<Bottombar />} />
         </Routes>
         <div>test</div>
         <NavLink to="/map">Go to map</NavLink>
