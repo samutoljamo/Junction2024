@@ -31,9 +31,9 @@ export default function SerialNumberModel() {
       >
         <div>
           <Typography level="h4" component="h1">
-            <b>Information</b>
+            <b>Device information</b>
           </Typography>
-          <Typography level="body-sm">Verify the information.</Typography>
+          <Typography level="body-sm">Verify the information collected from image.</Typography>
         </div>
         <FormControl>
           <FormLabel>Serial Number</FormLabel>
@@ -41,12 +41,12 @@ export default function SerialNumberModel() {
             // html input attribute
             name="serialNumber"
             type="text"
-            placeholder="123"
+
           />
         </FormControl>
         <ButtonGroup spacing="0.5rem" aria-label="spacing button group">
-        <Button >Back</Button>
-        <Button>Continue</Button>
+        <Button onClick={function(){}} >Back</Button>
+        <Button onClick={function(){}} >Continue</Button>
         </ButtonGroup>
       </Sheet>
     </main>
