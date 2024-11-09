@@ -25,6 +25,7 @@ ReactDOM.createRoot(document.getElementById('root')!).render(
           <Route path="/information" element={<SerialNumberModel />}/>
         </Routes>
         <div>test</div>
+        <Bottombar />
         <NavLink to="/map">Go to map</NavLink>
         <NavLink to="/">Go to root</NavLink>
       </Router>

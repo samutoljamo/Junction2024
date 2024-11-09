@@ -1,14 +1,11 @@
 import React from 'react';
-import { Box, Button, Grid } from '@mui/joy';
+import { Box, Button, Grid, Item } from '@mui/joy';
 import { useNavigate } from 'react-router-dom';
 
 export default function Bottombar() {
     const navigate = useNavigate();
 
-    const handleClick = () => {
-        navigate("/map"); // Navigate to the "/map" route
-    };
-
+  
     return (
         <Box
             sx={{
@@ -22,16 +19,24 @@ export default function Bottombar() {
             }}
         >
             <Grid container spacing={2}>
-                <Grid xs={6}>
+                <Grid alignItems="center" justifyContent="center" xs={6}>
                     <Button
-                        onClick={handleClick}
+                         onClick={() => navigate("/map")}
                         variant="solid"
                         sx={{ margin: 2 }}
                     >
-                        Go to Map Page
+                        Map
                     </Button>
                 </Grid>
                 <Grid xs={6}>
+                    <Button
+                        
+                        onClick={() => navigate("/")}
+                        variant="solid"
+                        sx={{ margin: 2 }}
+                    >
+                        I am here
+                    </Button>
                     {/* You can add another button or content here */}
                 </Grid>
             </Grid>
