@@ -45,6 +45,8 @@ class ItemDB(Base):
     floor = Column(Integer)
     serial_number = Column(String, nullable=True)
     material = Column(String, nullable=True)
+    model = Column(String, nullable=True)
+    manufacturer = Column(String, nullable=True)
     description = Column(String, nullable=True) # this could be updated based on visits
     manufacturing_year = Column(Integer, nullable=True)
     
@@ -52,6 +54,17 @@ class ItemDB(Base):
     building = relationship('Building', back_populates='items')
     type = relationship('ItemType', back_populates='items')
     visits = relationship("VisitDB", back_populates="item", cascade="all, delete-orphan")
+
+equipment_name: Optional[str] = Field(description="The name of the equipment", default="")
+    equipment_type: ItemType = Field(description="Type of the item", default=ItemType.other)
+    manufacturer: Optional[str] = Field(description="The manufacturer of the item", default=None)
+    manufacturing_year: Optional[int] = Field(description="The manufacturing year of the item", default=None)
+    model: Optional[str] = Field(description="The model of the item", default=None)
+    serial_number: Optional[str] = Field(description="The serial number of the device if found", default=None)
+    material: Optional[str] = Field(description="The material of the item", default=None)
+    surface_condition: Optional[str] = Field(description="The surface condition of the item", default=None)
+
+
 
 class VisitDB(Base):
     __tablename__ = "visits"
@@ -140,17 +153,23 @@ async def save_image(base64_str: str) -> str:
         raise HTTPException(status_code=400, detail=f"Invalid image data: {str(e)}")
 
 #Pydantic models for ai analysis
-class ItemCategory(Enum):
+class ItemType(Enum):
     # all the categories that the KONE company has
-    device = "device"
     structure = "structure"
+    ventilation = "ventilation"
+    electrical = "electrical"
+    plumbing = "plumbing"
     other = "other"
 
+
 class ItemStructure(BaseModel):
-    category: ItemCategory = Field(description="The category of the item", default=ItemCategory.other)
+    equipment_name: Optional[str] = Field(description="The name of the equipment", default="")
+    equipment_type: ItemType = Field(description="Type of the item", default=ItemType.other)
+    manufacturer: Optional[str] = Field(description="The manufacturer of the item", default=None)
+    manufacturing_year: Optional[int] = Field(description="The manufacturing year of the item", default=None)
+    model: Optional[str] = Field(description="The model of the item", default=None)
     serial_number: Optional[str] = Field(description="The serial number of the device if found", default=None)
     material: Optional[str] = Field(description="The material of the item", default=None)
-    manufacturing_year: Optional[int] = Field(description="The manufacturing year of the item", default=None)
     surface_condition: Optional[str] = Field(description="The surface condition of the item", default=None)
 
 
@@ -301,10 +320,22 @@ async def upload_image(payload: ImageUpload, db: Session = Depends(get_db)):
         
         image_url = await save_image(payload.image)
 
-        item = await extract_item_info_from_image(payload.image)
+        extracted_item = await extract_item_info_from_image(payload.image)
+        if extracted_item.equipment_name: 
+            visit.item.name = extracted_item.equipment_name
+        if extracted_item.manufacturing_year and not visit.item.manufacturing_year:
+            visit.item.manufacturer = extracted_item.manufacturing_year
+        if extracted_item.model and not visit.item.model:
+            visit.item.model = extracted_item.model
+        if extracted_item.serial_number and not visit.item.serial_number:
+            visit.item.serial_number = extracted_item.serial_number
+        if extracted_item.material and not visit.item.material:
+            visit.item.material = extracted_item.material
 
-        # add the extracted information to the visit
-        #...
+
+
+        # add the current condition to this visit
+        visit.condition = item.surface_condition
 
         
         # create a new picture object
@@ -316,7 +347,7 @@ async def upload_image(payload: ImageUpload, db: Session = Depends(get_db)):
         
         return {
             "message": "Image uploaded successfully",
-            "item_id": item.id,
+            "visit_id": visit.id,
             "picture_id": new_picture.id,
             "url": image_url
         }
