@@ -1,13 +1,20 @@
 import React, { useState } from "react";
 import { CssVarsProvider } from "@mui/joy/styles";
-import { Box, Button, CssBaseline, IconButton, Tooltip, Typography, Modal } from "@mui/joy";
+import {
+  Box,
+  Button,
+  CssBaseline,
+  IconButton,
+  Tooltip,
+  Typography,
+  Modal,
+} from "@mui/joy";
 import RoomIcon from "@mui/icons-material/Room";
 import map_image from "../assets/kaapelitehdas_ifc_from_top 1.png";
 import CameraView from "../assets/components/CameraView";
 import { useNavigate } from "react-router-dom";
 
 export default function Root() {
-
   const navigate = useNavigate();
   interface Machine {
     id: number;
@@ -30,7 +37,7 @@ export default function Root() {
   const handleMachineClick = (machine: Machine) => {
     setActiveMachineId(machine.id);
     setSelectedMachine(machine);
-    setOpenModal(true);  // Open modal with machine info
+    setOpenModal(true); // Open modal with machine info
   };
 
   const handleCloseModal = () => {
@@ -42,12 +49,12 @@ export default function Root() {
   const handleAddNewDevice = () => {
     const newMachine: Machine = {
       id: machines.length + 1, // or use a more robust ID generation method
-      x: Math.random() * 200,  // Random X position for the new machine
-      y: Math.random() * 200,  // Random Y position for the new machine
+      x: Math.random() * 200, // Random X position for the new machine
+      y: Math.random() * 200, // Random Y position for the new machine
       name: `New Device ${machines.length + 1}`,
     };
 
-    setMachines([...machines, newMachine]);  // Add the new machine to the list
+    setMachines([...machines, newMachine]); // Add the new machine to the list
   };
 
   return (
@@ -65,20 +72,27 @@ export default function Root() {
           paddingTop: 2,
         }}
       >
-
-
         {/* Labels Section: */}
-        <Box sx={{ display: "flex", justifyContent: "center", marginBottom: 2 }}>
+        <Box
+          sx={{ display: "flex", justifyContent: "center", marginBottom: 2 }}
+        >
           {machines.map((machine) => (
-            <Box key={machine.id} sx={{ display: "flex", flexDirection: "column", alignItems: "center", marginRight: 3 }}>
-              <Typography level="body1">{`${machine.name}`}</Typography>
+            <Box
+              key={machine.id}
+              sx={{
+                display: "flex",
+                flexDirection: "column",
+                alignItems: "center",
+                marginRight: 3,
+              }}
+            >
+              <Typography level="body-lg">{`${machine.name}`}</Typography>
               <Typography>{machine.id}</Typography>
             </Box>
           ))}
         </Box>
 
         {/* New Device Button */}
-
 
         {/* Map Section: */}
         <Box
@@ -93,7 +107,6 @@ export default function Root() {
             backgroundColor: "background.level2",
             borderRadius: "8px",
             boxShadow: "0 4px 12px rgba(0,0,0,0.2)",
-
           }}
         >
           <Typography level="h4" sx={{ marginTop: 1 }}>
@@ -127,7 +140,8 @@ export default function Root() {
                   width: 40,
                   height: 40,
                   transform: "translate(-50%, -50%)",
-                  backgroundColor: activeMachineId === machine.id ? "green" : "red",
+                  backgroundColor:
+                    activeMachineId === machine.id ? "green" : "red",
                   boxShadow: "0 0 10px rgba(0,0,0,0.3)",
                 }}
               >
@@ -138,7 +152,7 @@ export default function Root() {
             </Tooltip>
           ))}
           <Button
-            onClick={() => navigate('/adddevice')}
+            onClick={() => navigate("/adddevice")}
             sx={{
               backgroundColor: "gray",
               color: "white",
@@ -168,7 +182,7 @@ export default function Root() {
               width: "90%",
             }}
           >
-            <Typography level="h6">{selectedMachine?.name}</Typography>
+            <Typography level="body-sm">{selectedMachine?.name}</Typography>
             <Typography>ID: {selectedMachine?.id}</Typography>
             <Typography>
               Coordinates: ({selectedMachine?.x}, {selectedMachine?.y})

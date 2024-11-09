@@ -3,11 +3,13 @@ import { useDispatch, useSelector, useStore } from "react-redux";
 import type { TypedUseSelectorHook } from "react-redux";
 import formReducer from "./store/formSlice";
 import backendReducer from "./store/backendSlice";
+import { backend } from "./store/backend";
 
 export const store = configureStore({
   reducer: {
     form: formReducer,
     backend: backendReducer,
+    [backend.reducerPath]: backend.reducer,
   },
 });
 export type AppStore = typeof store;
