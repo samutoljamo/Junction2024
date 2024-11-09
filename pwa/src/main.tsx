@@ -4,6 +4,8 @@ import Map from "./routes/map";
 import Bottombar from "./routes/bottom-bar";
 import CameraView from "./assets/components/CameraView";
 import Locate from "./assets/components/Locate";
+import PreviousVisits from "./assets/components/PreviousVisits";
+
 
 import { BrowserRouter as Router, Routes, Route } from "react-router-dom";
 import "@fontsource/inter";
@@ -23,6 +25,7 @@ ReactDOM.createRoot(document.getElementById("root")!).render(
           <Route path="/information" element={<SerialNumberModel />} />
           <Route path="/camera" element={<CameraView />} />
           <Route path="/locate" element={<Locate />} />
+          <Route path="/previous-visits/:id" element={<PreviousVisits />} />
         </Routes>
         {/* <Bottombar /> */}
       </Router>
