@@ -27,7 +27,7 @@ export default function Root(){
         Hello form root
         
     <div>
-      <SerialNumberModel/>
+      
     {loc}</div>
     {!image && <Camera ref={camera} errorMessages={{}} aspectRatio={1} />}
     <Button onClick={() => {
