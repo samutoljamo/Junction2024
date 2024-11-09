@@ -16,20 +16,20 @@ import Stack from "@mui/joy/Stack";
 
 import {
   setEquipmentName,
-  setLocationInBuilding,
   setManufacturer,
   setModel,
   setSerialNumber,
   setEquipmentType,
   setSize,
   setManufacturingYear,
-  setTypeOfMaterial,
+  setMaterial,
   setCondition,
   setFreeComment,
 } from "../../store/formSlice";
 
 import { useAppSelector } from "../../store";
 import { useFormFill } from "../../hooks";
+import { addItem } from "../../store/backendSlice";
 
 export default function SerialNumberModel() {
   const navigate = useNavigate();
@@ -100,16 +100,6 @@ export default function SerialNumberModel() {
         </FormControl>
 
         <FormControl>
-          <FormLabel>Location in the Building</FormLabel>
-          <Input
-            name="location"
-            type="text"
-            value={form.locationInBuilding}
-            onChange={(e) => dispatch(setLocationInBuilding(e.target.value))}
-          />
-        </FormControl>
-
-        <FormControl>
           <FormLabel>Manufacturer</FormLabel>
           <Input
             name="manufacturer"
@@ -175,8 +165,8 @@ export default function SerialNumberModel() {
           <Input
             name="typeOfMaterial"
             type="text"
-            value={form.typeOfMaterial}
-            onChange={(e) => dispatch(setTypeOfMaterial(e.target.value))}
+            value={form.material}
+            onChange={(e) => dispatch(setMaterial(e.target.value))}
           />
         </FormControl>
 
@@ -210,12 +200,30 @@ export default function SerialNumberModel() {
         <ButtonGroup spacing="9.5rem" aria-label="spacing button group">
           <Button
             onClick={function () {
-              navigate("/map");
+              navigate("/locate");
             }}
           >
             Back
           </Button>
-          <Button onClick={function () {}} variant="solid" color="primary">
+          <Button
+            onClick={function () {
+              dispatch(
+                addItem({
+                  ...form,
+                  visits: [
+                    {
+                      condition: form.condition,
+                      notes: form.freeComment,
+                      createdAt: new Date().toISOString(),
+                    },
+                  ],
+                })
+              );
+              navigate("/");
+            }}
+            variant="solid"
+            color="primary"
+          >
             Add device
           </Button>
         </ButtonGroup>

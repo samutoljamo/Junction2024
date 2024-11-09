@@ -9,7 +9,7 @@ import {
   setManufacturingYear,
   setModel,
   setSerialNumber,
-  setTypeOfMaterial,
+  setMaterial,
 } from "../store/formSlice";
 
 export function useFormFill() {
@@ -33,7 +33,7 @@ export function useFormFill() {
       dispatch(setManufacturingYear(data.manufacturing_year));
     }
     if (data?.material) {
-      dispatch(setTypeOfMaterial(data.material));
+      dispatch(setMaterial(data.material));
     }
     if (data?.model) {
       dispatch(setModel(data.model));
