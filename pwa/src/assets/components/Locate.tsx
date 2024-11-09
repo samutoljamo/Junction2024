@@ -2,12 +2,11 @@ import { Typography, Stack, Button, Box } from "@mui/joy";
 import map_image from "../kaapelitehdas_ifc_from_top 1.png";
 import { NavLink, useNavigate } from "react-router-dom";
 import { useAppDispatch, useAppSelector } from "../../store";
-import { useRef, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import { setX, setY } from "../../store/formSlice";
+import { gpsToNormalized } from "../../utils";
 
 export default function Locate() {
-  const navigate = useNavigate();
-
   const imageRef = useRef();
 
   const dispatch = useAppDispatch();
@@ -15,6 +14,17 @@ export default function Locate() {
     x: number;
     y: number;
   } | null>(null);
+
+  useEffect(() => {
+    navigator.geolocation.getCurrentPosition((pos) => {
+      const localized = gpsToNormalized(
+        pos.coords.latitude,
+        pos.coords.longitude
+      );
+      console.log(localized);
+      setCoords(localized);
+    });
+  }, []);
 
   return (
     <Stack alignItems="center" alignContent="center" justifyContent="center">

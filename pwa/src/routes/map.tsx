@@ -1,4 +1,4 @@
-import React, { useState, useRef } from "react";
+import React, { useState, useRef, useEffect } from "react";
 import { CssVarsProvider } from "@mui/joy/styles";
 import {
   Box,
@@ -19,6 +19,7 @@ import { useNavigate } from "react-router-dom";
 import { useAppDispatch, useAppSelector } from "../store";
 import { addItem } from "../store/backendSlice";
 import { resetForm } from "../store/formSlice";
+import { gpsToNormalized } from "../utils";
 
 export default function Root() {
   const navigate = useNavigate();
@@ -47,14 +48,57 @@ export default function Root() {
     handleMenuClose();
     action();
   };
+  const [coords, setCoords] = useState<{
+    x: number;
+    y: number;
+  } | null>(null);
+
+  useEffect(() => {
+    navigator.geolocation.getCurrentPosition((pos) => {
+      const localized = gpsToNormalized(
+        pos.coords.latitude,
+        pos.coords.longitude
+      );
+      console.log(localized);
+      setCoords(localized);
+    });
+  }, []);
 
   return (
     <Stack alignItems="center" alignContent="center" justifyContent="center">
       <Typography level="h4" sx={{ marginTop: 1 }}>
         Kaapelitehdas
       </Typography>
-      <Typography sx={{ marginBottom: 0 }}>Press to open info</Typography>
-      <div style={{ position: "relative", display: "inline-block" }}>
+      <Box sx={{ display: 'flex', gap: 1, padding: 2, flexDirection: 'column' }}>
+        <Box sx={{ display: 'flex', alignItems: 'center', gap: 1 }}>
+          <Box 
+            sx={{ 
+              width: 12,
+              height: 12,
+              borderRadius: '50%',
+              backgroundColor: 'rgb(60, 72, 201)',
+            }} 
+          />
+        <Typography>Your Location</Typography>
+      </Box>
+      <Box sx={{ display: 'flex', alignItems: 'center', gap: 1 }}>
+        <Box 
+          sx={{ 
+            width: 12,
+            height: 12,
+            backgroundColor: 'rgba(255, 0, 0, 0.5)',
+          }} 
+        />
+        <Typography>Device (clickable)</Typography>
+        </Box>
+      </Box>
+      <div style={{ position: "relative", display: "inline-block" }}
+      onClick={() => {
+        if (menuAnchorEl) {
+          handleMenuClose();
+        }}}
+        >
+
         <img
           ref={imageRef}
           src={map_image}
@@ -63,34 +107,7 @@ export default function Root() {
             maxHeight: 500,
             display: "block",
           }}
-          onClick={(e) => {
-            if (menuAnchorEl) {
-              handleMenuClose();
-              return;
-            }
-            const rect = imageRef.current?.getBoundingClientRect();
-            dispatch(
-              addItem({
-                x: (e.clientX - rect.left) / rect.width,
-                y: (e.clientY - rect.top) / rect.height,
-                floor: 1,
-                visits: [        {
-                  condition: "good",
-                  notes: "Stunning",
-                  createdAt: new Date(2024, 11, 8).toLocaleDateString(),
-                  surveyor: "Mike J",
-                },
-                {
-                  condition: "horrible",
-                  notes: "Very bad",
-                  createdAt: new Date(2024, 3, 2).toLocaleDateString(),
-                  surveyor: "Jake L",
-                },],
-              })
-            );
-          }}
         />
-
         {/* Map over items and render circles */}
         {items.map((item) => (
           <div
@@ -104,32 +121,68 @@ export default function Root() {
               transform: "translate(-50%, -50%)",
               width: "20px",
               height: "20px",
-              borderRadius: "50%",
               backgroundColor: "rgba(255, 0, 0, 0.5)",
               cursor: "pointer",
             }}
           />
         ))}
+        {coords && (
+          <div
+            style={{
+              position: "absolute",
+              top: `${coords.y * 100}%`,
+              left: `${coords.x * 100}%`,
+              transform: "translate(-50%, -50%)",
+              width: "20px",
+              height: "20px",
+              borderRadius: "50%",
+              backgroundColor: "#3C48C9",
+              cursor: "pointer",
+            }}
+          />
+        )}
         <Menu
           anchorEl={menuAnchorEl}
           open={Boolean(menuAnchorEl)}
           onClose={handleMenuClose}
           placement="bottom-start"
         >
-          <MenuItem onClick={() => handleMenuItemClick(() => navigate(`/item/${selectedItem?.id}`))}>
+          <MenuItem
+            onClick={() =>
+              handleMenuItemClick(() => navigate(`/item/${selectedItem?.id}`))
+            }
+          >
             Add new visit
           </MenuItem>
-          <MenuItem onClick={() => handleMenuItemClick(() => navigate(`/previous-visits/${selectedItem?.id}`))}>
+          <MenuItem
+            onClick={() =>
+              handleMenuItemClick(() =>
+                navigate(`/previous-visits/${selectedItem?.id}`)
+              )
+            }
+          >
             View previous visits
           </MenuItem>
           <MenuItem
-            onClick={() => handleMenuItemClick(() => console.log("Delete item", selectedItem?.id))}
+            onClick={() =>
+              handleMenuItemClick(() =>
+                console.log("Delete item", selectedItem?.id)
+              )
+            }
           >
             Replace device
           </MenuItem>
         </Menu>
+          
       </div>
       <Button
+        style={{
+          backgroundColor: "#542DAE",
+          fontWeight: "400",
+          marginTop: "15px",
+          boxShadow: "1px 2px 4px 0 rgba(0,0,0,0.35)",
+          borderRadius: "10px"
+        }}
         onClick={() => {
           dispatch(resetForm());
           navigate("/camera");
