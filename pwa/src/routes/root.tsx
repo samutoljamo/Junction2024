@@ -34,7 +34,8 @@ export default function Root(){
       if(camera.current){
         setImage(camera.current.takePhoto())
       }
-    }}>Testing</Button>
+    }}>Testing
+    </Button>
     <img src={image} />
       <PWABadge />
     </Box>

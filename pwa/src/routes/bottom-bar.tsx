@@ -1,6 +1,8 @@
 import { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
-import { Box, Button, Grid } from '@mui/material';
+import { Box, Button, Grid } from '@mui/joy';
+
+import KeyboardArrowRight from '@mui/icons-material/KeyboardArrowRight';
 
 export default function Bottombar() {
     const navigate = useNavigate();
@@ -41,18 +43,27 @@ export default function Bottombar() {
             }}
         >
             <Grid container spacing={2}>
-                <Grid item xs={6} alignItems="center" justifyContent="center">
+            <Grid item xs={6} container justifyContent="center" alignItems="center">
                     <Button
                         onClick={handlePreviousRoute} // Use the backward navigation here
-                        sx={{ margin: 2 }}
+                        variant="solid"
+                        sx={{
+                            margin: 2,
+                            minWidth: '150px', // Set minimum width here
+                        }}
                     >
                         Back
                     </Button>
                 </Grid>
-                <Grid item xs={6}>
+                <Grid item xs={6} container justifyContent="center" alignItems="center">
                     <Button
                         onClick={handleNextRoute}
-                        sx={{ margin: 2 }}
+                        variant="solid"
+                        endDecorator={<KeyboardArrowRight />}
+                        sx={{
+                            margin: 2,
+                            minWidth: '150px', // Set minimum width here
+                        }}
                     >
                         Next
                     </Button>
