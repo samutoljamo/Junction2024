@@ -81,7 +81,7 @@ async def extract_item_info_from_images(base64_str_images: list[str]) -> ItemStr
             messages=[
                 {
                     "role": "system",
-                    "content": "You are a system that always extracts information from images. If some information is not visible in the image, leave it blank.",
+                    "content": "You are a system that always extracts information from images. If some information is not visible in the image, leave it as None.",
                     "role": "user",
                     "content": content
                 }
