@@ -5,6 +5,7 @@ interface Visit {
   condition: string;
   notes: string;
   createdAt: string;
+  surveyor: string;
 }
 
 export interface Item {
@@ -42,8 +43,15 @@ const initialState: BackendSlice = {
       visits: [
         {
           condition: "good",
-          notes: "fsdfds",
+          notes: "Stunning",
           createdAt: new Date(2024, 11, 8).toISOString(),
+          surveyor: "Mike J",
+        },
+        {
+          condition: "horrible",
+          notes: "Very bad",
+          createdAt: new Date(2024, 3, 2).toISOString(),
+          surveyor: "Jake L",
         },
       ],
     },
