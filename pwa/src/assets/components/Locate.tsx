@@ -30,7 +30,7 @@ export default function Locate() {
     <Stack alignItems="center" alignContent="center" justifyContent="center">
       <Typography level="h1">Add Device</Typography>
       <Typography sx={{ marginBottom: 0 }}>
-        Select the device location
+        Press to correct position
       </Typography>
       <div style={{ position: "relative", display: "inline-block" }}>
         <img
@@ -67,7 +67,7 @@ export default function Locate() {
       </div>
       <Box flexGrow={1} />
       <Stack direction="row" spacing={2} p={2}>
-      <NavLink to="/information">
+        <NavLink to="/information">
           <Button style={{
           backgroundColor: "#542DAE",
           fontWeight: "400",
