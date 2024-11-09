@@ -5,6 +5,7 @@ import Map from "./routes/map"
 import Bottombar from './routes/bottom-bar'
 import ConfirmData from './routes/confirm-data'
 import ConfirmCondition from './routes/confirm-condition'
+import CameraView from './assets/components/CameraView'
 
 
 import { BrowserRouter as Router, Routes, Route, NavLink } from 'react-router-dom';
@@ -27,11 +28,9 @@ ReactDOM.createRoot(document.getElementById('root')!).render(
           <Route path="/information" element={<SerialNumberModel />}/>
           <Route path="/confirmdata" element={<ConfirmData />}/>
           <Route path="/confirmcondition" element={<ConfirmCondition />}/>
+          <Route path="/camera" element={<CameraView />}/>
         </Routes>
-        <div>test</div>
         <Bottombar />
-        <NavLink to="/map">Go to map</NavLink>
-        <NavLink to="/">Go to root</NavLink>
       </Router>
       </Provider>
   </React.StrictMode>,

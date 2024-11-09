@@ -1,6 +1,6 @@
 import { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
-import { Box, Button, Grid } from '@mui/material';
+import { Box, Button, Grid } from '@mui/joy';
 
 export default function Bottombar() {
     const navigate = useNavigate();

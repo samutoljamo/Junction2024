@@ -7,7 +7,9 @@ import FormLabel from '@mui/joy/FormLabel';
 import Input from '@mui/joy/Input';
 import Button from '@mui/joy/Button';
 import Link from '@mui/joy/Link';
-import { ButtonGroup } from '@mui/joy';
+import { ButtonGroup, Select } from '@mui/joy';
+import Textarea from '@mui/joy/Textarea';
+import Box from '@mui/joy';
 
 
 
@@ -16,7 +18,7 @@ export default function SerialNumberModel() {
     <main>
       <Sheet
         sx={{
-          width: 300,
+          width: '60%',
           mx: 'auto', // margin left & right
           my: 4, // margin top & bottom
           py: 3, // padding top & bottom
@@ -44,9 +46,74 @@ export default function SerialNumberModel() {
 
           />
         </FormControl>
-        <ButtonGroup spacing="0.5rem" aria-label="spacing button group">
-        <Button onClick={function(){}} >Back</Button>
-        <Button onClick={function(){}} >Continue</Button>
+        <FormControl>
+        <FormLabel>Equipment Name</FormLabel>
+        <Input name="equipmentName" type="text" />
+        </FormControl>
+
+        <FormControl>
+            <FormLabel>Location in the Building</FormLabel>
+            <Input name="location" type="text" />
+        </FormControl>
+
+        <FormControl>
+            <FormLabel>Manufacturer</FormLabel>
+            <Input name="manufacturer" type="text" />
+        </FormControl>
+
+        <FormControl>
+            <FormLabel>Model</FormLabel>
+            <Input name="model" type="text" />
+        </FormControl>
+
+        <FormControl>
+            <FormLabel>Serial Number</FormLabel>
+            <Input name="serialNumber" type="text" />
+        </FormControl>
+
+        <FormControl>
+            <FormLabel>Equipment Type</FormLabel>
+            <Select name="equipmentType" defaultValue="">
+            <option value="structure">Structure</option>
+            <option value="ventilation">Ventilation</option>
+            <option value="electrical">Electrical</option>
+            <option value="plumbing">Plumbing</option>
+            <option value="other">Other</option>
+            </Select>
+        </FormControl>
+
+        <FormControl>
+            <FormLabel>Size</FormLabel>
+            <Input name="size" type="text" />
+        </FormControl>
+
+        <FormControl>
+            <FormLabel>Age</FormLabel>
+            <Input name="age" type="number" />
+        </FormControl>
+
+        <FormControl>
+            <FormLabel>Type of Material</FormLabel>
+            <Input name="materialType" type="text" />
+        </FormControl>
+
+        <FormControl>
+            <FormLabel>Condition</FormLabel>
+            <Select name="condition" defaultValue="">
+            <option value="new">New</option>
+            <option value="good">Good</option>
+            <option value="fair">Fair</option>
+            <option value="poor">Poor</option>
+            </Select>
+        </FormControl>
+
+        <FormControl>
+        <FormLabel>Free comment</FormLabel>
+        <Textarea  minRows={2} name="FreeComment" />
+        </FormControl>
+        <ButtonGroup spacing="107.9px" aria-label="spacing button group">
+        <Button onClick={function(){}}  >Back</Button>
+        <Button onClick={function(){}} variant="solid" color="primary" >Continue</Button>
         </ButtonGroup>
       </Sheet>
     </main>
