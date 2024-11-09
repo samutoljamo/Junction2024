@@ -10,7 +10,7 @@ export default function CameraView() {
     const dispatch = useAppDispatch();
   
     return (
-      <Box sx={{ height: '100%', display: 'flex', flexDirection: 'column' }}>
+      <Box sx={{ height: '100vh-50px', display: 'flex', flexDirection: 'column' }}>
         <Stack spacing={2} alignItems="center" sx={{ width: '100%', mx: 'auto', p: 2, flexGrow: 1 }}>
           <Camera ref={camera} errorMessages={{}} aspectRatio={1} />
           <Typography>Images</Typography>
