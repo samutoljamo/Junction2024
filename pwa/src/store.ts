@@ -11,6 +11,8 @@ export const store = configureStore({
     backend: backendReducer,
     [backend.reducerPath]: backend.reducer,
   },
+  middleware: (getDefaultMiddleware) =>
+    getDefaultMiddleware().concat(backend.middleware),
 });
 export type AppStore = typeof store;
 // Infer the `RootState` and `AppDispatch` types from the store itself

@@ -22,6 +22,14 @@ load_dotenv()
 
 app = FastAPI()
 
+app.add_middleware(
+    CORSMiddleware,
+    allow_origins=["*"],
+    allow_credentials=True,
+    allow_methods=["*"],
+    allow_headers=["*"],
+)
+
 #Pydantic models for ai analysis
 class ItemTypeCategory(Enum):
     # all the categories that the KONE company has
@@ -86,6 +94,8 @@ async def extract_item_info_from_images(base64_str_images: list[str]) -> ItemStr
 
 client = instructor.from_openai(OpenAI(api_key=os.getenv("OPENAI_API_KEY")))
 model = "gpt-4o-mini"
+
+
 
 @app.post("/uploadtest/", response_model=ItemStructure)
 async def upload_image():
