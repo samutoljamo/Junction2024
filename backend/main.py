@@ -201,29 +201,63 @@ def get_item():
     )
     return example_item
 
-@app.post("/create_item")
-async def create_item(item: ItemBase, db: Session = Depends(get_db)):
+@app.post("/get_all_items_for_given_floor", response_model=List[ItemBase])
+async def get_all_items(floor_number: int, db: Session = Depends(get_db)):
+    items = db.query(ItemDB).filter(ItemDB.floor == floor_number).all()
+    return items
+
+
+@app.get("/create_new_item", response_model=ItemBase)
+async def create_new_item(item: ItemBase, db: Session = Depends(get_db)):
     new_item = ItemDB(**item.dict())
     db.add(new_item)
     db.commit()
     db.refresh(new_item)
     return new_item
 
-@app.post("/items/", response_model=ItemBase)
-async def create_item(item: ItemBase, db: Session = Depends(get_db)):
-    db_item = ItemDB(**item.dict())
-    db.add(db_item)
+@app.get("/modify_item", response_model=ItemBase)
+async def modify_item(item_id: int, item: ItemBase, db: Session = Depends(get_db)):
+    item_to_modify = db.query(ItemDB).filter(ItemDB.id == item_id).first()
+    if item_to_modify is None:
+        raise HTTPException(status_code=404, detail="Item not found")
+    for key, value in item.dict().items():
+        setattr(item_to_modify, key, value)
     db.commit()
-    db.refresh(db_item)
-    return db_item
+    db.refresh(item_to_modify)
+    return item_to_modify
 
-@app.get("/create_new_item")
-async def create_new_item(db: Session = Depends(get_db)):
-    new_item = ItemDB()
-    db.add(new_item)
+@app.get("/delete_item", response_model=ItemBase)
+async def delete_item(item_id: int, db: Session = Depends(get_db)):
+    item_to_delete = db.query(ItemDB).filter(ItemDB.id == item_id).first()
+    if item_to_delete is None:
+        raise HTTPException(status_code=404, detail="Item not found")
+    db.delete(item_to_delete)
     db.commit()
-    db.refresh(new_item)
-    return new_item
+    return item_to_delete
+
+@app.get("/add_visit_to_item", response_model=ItemBase)
+async def add_visit_to_item(item_id: int, visit: VisitBase, db: Session = Depends(get_db)):
+    item = db.query(ItemDB).filter(ItemDB.id == item_id).first()
+    if item is None:
+        raise HTTPException(status_code=404, detail="Item not found")
+    new_visit = VisitDB(**visit.dict(), item_id=item_id)
+    db.add(new_visit)
+    db.commit()
+    db.refresh(new_visit)
+    return item
+
+@app.get("/modify_visit", response_model=VisitBase)
+async def modify_visit(visit_id: int, visit: VisitBase, db: Session = Depends(get_db)):
+    visit_to_modify = db.query(VisitDB).filter(VisitDB.id == visit_id).first()
+    if visit_to_modify is None:
+        raise HTTPException(status_code=404, detail="Visit not found")
+    for key, value in visit.dict().items():
+        setattr(visit_to_modify, key, value)
+    db.commit()
+    db.refresh(visit_to_modify)
+    return visit_to_modify
+
+
 
 class TestModel(BaseModel):
     name: str
