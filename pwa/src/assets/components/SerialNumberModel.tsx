@@ -222,7 +222,7 @@ export default function SerialNumberModel() {
               navigate("/");
             }}
             variant="solid"
-            color="primary"
+            color="success"
           >
             Add device
           </Button>
