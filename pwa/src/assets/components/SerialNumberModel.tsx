@@ -10,10 +10,35 @@ import Link from '@mui/joy/Link';
 import { ButtonGroup, Select } from '@mui/joy';
 import Textarea from '@mui/joy/Textarea';
 import Box from '@mui/joy';
+import { useSelector, useDispatch } from 'react-redux'
+import { formSlice } from '../../formSlice';
+import { Option } from '@mui/joy';
 
-
+import {
+    setEquipmentName,
+    setLocationInBuilding,
+    setManufacturer,
+    setModel,
+    setSerialNumber,
+    setEquipmentType,
+    setSize,
+    setAge,
+    setTypeOfMaterial,
+    setCondition,
+    setFreeComment
+  } from '../../formSlice';
 
 export default function SerialNumberModel() {
+
+const dispatch = useDispatch();
+function handleSelectChange(event:any) {
+
+    // if you want to support some really old IEs, add
+    // event = event || window.event;
+  
+}
+// Get the form values from the Redux store
+let form = useSelector((state:any) => state.form);
   return (
     <main>
       <Sheet
@@ -40,76 +65,120 @@ export default function SerialNumberModel() {
         <FormControl>
           <FormLabel>Serial Number</FormLabel>
           <Input
-            // html input attribute
             name="serialNumber"
             type="text"
-
+            value={form.serialNumber}
+            onChange={(e) => dispatch(setSerialNumber(e.target.value))}
           />
         </FormControl>
+
         <FormControl>
-        <FormLabel>Equipment Name</FormLabel>
-        <Input name="equipmentName" type="text" />
+          <FormLabel>Equipment Name</FormLabel>
+          <Input
+            name="equipmentName"
+            type="text"
+            value={form.equipmentName}
+            onChange={(e) => dispatch(setEquipmentName(e.target.value))}
+          />
         </FormControl>
 
         <FormControl>
-            <FormLabel>Location in the Building</FormLabel>
-            <Input name="location" type="text" />
+          <FormLabel>Location in the Building</FormLabel>
+          <Input
+            name="location"
+            type="text"
+            value={form.locationInBuilding}
+            onChange={(e) => dispatch(setLocationInBuilding(e.target.value))}
+          />
         </FormControl>
 
         <FormControl>
-            <FormLabel>Manufacturer</FormLabel>
-            <Input name="manufacturer" type="text" />
+          <FormLabel>Manufacturer</FormLabel>
+          <Input
+            name="manufacturer"
+            type="text"
+            value={form.manufacturer}
+            onChange={(e) => dispatch(setManufacturer(e.target.value))}
+          />
         </FormControl>
 
         <FormControl>
-            <FormLabel>Model</FormLabel>
-            <Input name="model" type="text" />
+          <FormLabel>Model</FormLabel>
+          <Input
+            name="model"
+            type="text"
+            value={form.model}
+            onChange={(e) => dispatch(setModel(e.target.value))}
+          />
         </FormControl>
 
         <FormControl>
-            <FormLabel>Serial Number</FormLabel>
-            <Input name="serialNumber" type="text" />
+          <FormLabel>Equipment Type</FormLabel>
+          <Select
+                name="equipmentType"
+                value={form.equipmentType}
+                onChange={(event, newValue) => dispatch(setEquipmentType(newValue))}
+                >
+                <Option value="structure">Structure</Option>
+                <Option value="ventilation">Ventilation</Option>
+                <Option value="electrical">Electrical</Option>
+                <Option value="plumbing">Plumbing</Option>
+                <Option value="other">Other</Option>
+                </Select>
         </FormControl>
 
         <FormControl>
-            <FormLabel>Equipment Type</FormLabel>
-            <Select name="equipmentType" defaultValue="">
-            <option value="structure">Structure</option>
-            <option value="ventilation">Ventilation</option>
-            <option value="electrical">Electrical</option>
-            <option value="plumbing">Plumbing</option>
-            <option value="other">Other</option>
-            </Select>
+          <FormLabel>Size</FormLabel>
+          <Input
+            name="size"
+            type="text"
+            value={form.size}
+            onChange={(e) => dispatch(setSize(e.target.value))}
+          />
         </FormControl>
 
         <FormControl>
-            <FormLabel>Size</FormLabel>
-            <Input name="size" type="text" />
+          <FormLabel>Age</FormLabel>
+          <Input
+            name="age"
+            type="number"
+            value={form.age}
+            onChange={(e) => dispatch(setAge(e.target.value))}
+          />
         </FormControl>
 
         <FormControl>
-            <FormLabel>Age</FormLabel>
-            <Input name="age" type="number" />
+          <FormLabel>Type of Material</FormLabel>
+          <Input
+            name="typeOfMaterial"
+            type="text"
+            value={form.typeOfMaterial}
+            onChange={(e) => dispatch(setTypeOfMaterial(e.target.value))}
+          />
         </FormControl>
 
         <FormControl>
-            <FormLabel>Type of Material</FormLabel>
-            <Input name="materialType" type="text" />
+          <FormLabel>Condition</FormLabel>
+          <Select
+            name="condition"
+            value={form.condition}
+            onChange={(event, newValue) => dispatch(setCondition(newValue))}
+          >
+            <Option value="new">New</Option>
+            <Option value="good">Good</Option>
+            <Option value="fair">Fair</Option>
+            <Option value="poor">Poor</Option>
+          </Select>
         </FormControl>
 
         <FormControl>
-            <FormLabel>Condition</FormLabel>
-            <Select name="condition" defaultValue="">
-            <option value="new">New</option>
-            <option value="good">Good</option>
-            <option value="fair">Fair</option>
-            <option value="poor">Poor</option>
-            </Select>
-        </FormControl>
-
-        <FormControl>
-        <FormLabel>Free comment</FormLabel>
-        <Textarea  minRows={2} name="FreeComment" />
+          <FormLabel>Free Comment</FormLabel>
+          <Textarea
+            minRows={2}
+            name="freeComment"
+            value={form.freeComment || ""}
+            onChange={(e) => dispatch(setFreeComment(e.target.value))}
+          />
         </FormControl>
         <ButtonGroup spacing="107.9px" aria-label="spacing button group">
         <Button onClick={function(){}}  >Back</Button>
