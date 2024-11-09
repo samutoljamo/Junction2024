@@ -109,7 +109,7 @@ class Item(ItemBase):
         from_attributes = True
 
 class ImageUpload(BaseModel):
-    image: str
+    images: List[str]
 
 # FastAPI app setup
 app = FastAPI()
@@ -166,10 +166,30 @@ class ItemStructure(BaseModel):
     material: Optional[str] = Field(description="The material of the item", default=None)
     surface_condition: Optional[str] = Field(description="The surface condition of the item", default=None)
 
-async def extract_item_info_from_image(base64_str: str) -> ItemStructure:
+import base64
+import tempfile
+from fastapi import HTTPException
+from PIL import Image
+import io
+from pprint import pprint
+
+async def extract_item_info_from_images(base64_str_images: list[str]) -> ItemStructure:
     try:
-        if not base64_str.startswith("data:image"):
-            base64_str = "data:image/jpeg;base64," + base64_str
+        for base64_str in base64_str_images:
+            if not base64_str.startswith("data:image"):
+                base64_str = "data:image/jpeg;base64," + base64_str
+
+        content = []
+        pprint(content)
+        for base64_str in base64_str_images:
+            content.append(
+                {
+                    "type": "image_url",
+                    "image_url": {
+                        "url": base64_str
+                    }
+                }
+            )
 
         item = client.chat.completions.create(
             model=model,
@@ -177,16 +197,9 @@ async def extract_item_info_from_image(base64_str: str) -> ItemStructure:
             messages=[
                 {
                     "role": "system",
-                    "content": "You are a system that always extracts information from images related to KONE devices and other structures.",
+                    "content": "You are a system that always extracts information from images",
                     "role": "user",
-                    "content": [
-                        {
-                            "type": "image_url",
-                            "image_url": {
-                                "url": base64_str
-                            }
-                        }
-                    ]
+                    "content": content
                 }
             ],
         )
@@ -234,20 +247,18 @@ class TestModel(BaseModel):
     name: str
     description: str
 
-@app.post("/uploadtest/")
+@app.post("/uploadtest/", response_model=ItemStructure)
 async def upload_image():
     try:
 
-        # generate test image and put it to base64 string
-        img = Image.new('RGB', (100, 100), color='red')
-        img_byte_arr = io.BytesIO()
-        img.save(img_byte_arr, format='PNG')
-        img_byte_arr = img_byte_arr.getvalue()
+        # generate a random base64 image
+        image = Image.new('RGB', (100, 100))
+        with tempfile.TemporaryFile() as tempf:
+            image.save(tempf, format="JPEG")
+            tempf.seek(0)
+            base64_encoded = base64.b64encode(tempf.read()).decode('utf-8')
 
-        base64_encoded = base64.b64encode(img_byte_arr).decode()
-
-        # Send the base64 string for processing
-        extracted_item = await extract_item_info_from_image(base64_encoded)
+        extracted_item = await extract_item_info_from_images([base64_encoded])
         print(extracted_item)
 
         return extracted_item
@@ -257,14 +268,12 @@ async def upload_image():
     except Exception as e:
         raise HTTPException(status_code=500, detail=f"Server error: {str(e)}")
 
-@app.post("/upload/")
+@app.post("/upload/", response_model=ItemStructure)
 async def upload_image(payload: ImageUpload, db: Session = Depends(get_db)):
     try:
 
-        #image_url = await save_image(payload.image)
-
         # extract the item information from the image
-        extracted_item = await extract_item_info_from_image(payload.image)
+        extracted_item = await extract_item_info_from_images(payload.images)
         
         return extracted_item
                
