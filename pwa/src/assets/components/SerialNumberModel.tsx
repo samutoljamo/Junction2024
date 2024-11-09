@@ -8,8 +8,6 @@ import Input from '@mui/joy/Input';
 import Button from '@mui/joy/Button';
 import Link from '@mui/joy/Link';
 import { ButtonGroup } from '@mui/joy';
-import {Camera} from "react-camera-pro"
-import SerialNumberModel from './assets/components/SerialNumberModel.tsx'
 
 
 
