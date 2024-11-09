@@ -4,11 +4,13 @@ import { Button, Stack, Typography, Grid, Box } from "@mui/joy";
 import { useAppSelector, useAppDispatch } from "../../store";
 import { addImage, removeImage } from "../../store/formSlice";
 import { NavLink } from "react-router-dom";
+import { useFormFill } from "../../hooks";
 
 export default function CameraView() {
   const camera = useRef<CameraType>(null);
   const images = useAppSelector((state) => state.form.images);
   const dispatch = useAppDispatch();
+  const { fillForm } = useFormFill();
 
   return (
     <Box
@@ -63,7 +65,15 @@ export default function CameraView() {
       >
         Capture Image
       </Button>
-      <NavLink to="/information">Add device</NavLink>
+      <NavLink to="/locate">
+        <Button
+          onClick={() => {
+            //    fillForm();
+          }}
+        >
+          Locate device
+        </Button>
+      </NavLink>
       <div>
         <input
           type="file"

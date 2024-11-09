@@ -7,16 +7,19 @@ interface Visit {
   createdAt: string;
 }
 
-interface Item {
+export interface Item {
   id: string;
+  equipmentName: string;
   x: number;
   y: number;
   floor: number;
-  serialNumber?: string;
-  material?: string;
-  model?: string;
   manufacturer?: string;
-  description?: string;
+  model?: string;
+  serialNumber?: string;
+  equipmentType?: string;
+  size?: string;
+  material?: string;
+  manufacturingYear?: number;
   visits: Visit[];
 }
 
@@ -32,10 +35,10 @@ const initialState: BackendSlice = {
       y: 0.2,
       floor: 1,
       serialNumber: "test",
-      material: "wood",
+      material: "material",
       model: "model",
       manufacturer: "dsffds",
-      description: "fdsdf",
+      equipmentName: "useless",
       visits: [
         {
           condition: "good",

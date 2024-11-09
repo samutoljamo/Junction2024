@@ -1,34 +1,36 @@
 import { createSlice, PayloadAction } from "@reduxjs/toolkit";
+import { Item } from "./backendSlice";
 interface FormSlice {
   images: {
     data: string;
     id: number;
   }[];
   equipmentName: string;
-  locationInBuilding: string;
+  x: number;
+  y: number;
   manufacturer: string;
   model: string;
   serialNumber: string;
   equipmentType: string;
   size: string;
-  typeOfMaterial: string;
+  material: string;
   condition: string;
   freeComment: string;
-  manufacturingYear: number | null;
+  manufacturingYear?: number;
   floor: number;
 }
 
 const initialState: FormSlice = {
   images: [],
   equipmentName: "",
-  locationInBuilding: "",
+  x: 0,
+  y: 0,
   manufacturer: "",
-  manufacturingYear: null,
   model: "",
   serialNumber: "",
   equipmentType: "",
   size: "",
-  typeOfMaterial: "",
+  material: "",
   condition: "",
   freeComment: "",
   floor: 1,
@@ -52,11 +54,14 @@ export const formSlice = createSlice({
     setEquipmentName: (state, action: PayloadAction<string>) => {
       state.equipmentName = action.payload;
     },
-    setLocationInBuilding: (state, action: PayloadAction<string>) => {
-      state.locationInBuilding = action.payload;
-    },
     setManufacturer: (state, action: PayloadAction<string>) => {
       state.manufacturer = action.payload;
+    },
+    setX: (state, action: PayloadAction<number>) => {
+      state.x = action.payload;
+    },
+    setY: (state, action: PayloadAction<number>) => {
+      state.y = action.payload;
     },
     setModel: (state, action: PayloadAction<string>) => {
       state.model = action.payload;
@@ -73,8 +78,8 @@ export const formSlice = createSlice({
     setSize: (state, action: PayloadAction<string>) => {
       state.size = action.payload;
     },
-    setTypeOfMaterial: (state, action: PayloadAction<string>) => {
-      state.typeOfMaterial = action.payload;
+    setMaterial: (state, action: PayloadAction<string>) => {
+      state.material = action.payload;
     },
     setCondition: (state, action: PayloadAction<string>) => {
       state.condition = action.payload;
@@ -85,6 +90,9 @@ export const formSlice = createSlice({
     setFloor: (state, action: PayloadAction<number>) => {
       state.floor = action.payload;
     },
+    resetForm: (state) => {
+      state = initialState;
+    },
   },
 });
 
@@ -93,17 +101,19 @@ export const {
   addImage,
   removeImage,
   setEquipmentName,
-  setLocationInBuilding,
+  setX,
+  setY,
   setManufacturer,
   setModel,
   setSerialNumber,
   setEquipmentType,
   setSize,
   setManufacturingYear,
-  setTypeOfMaterial,
+  setMaterial,
   setCondition,
   setFreeComment,
   setFloor,
+  resetForm,
 } = formSlice.actions;
 
 export default formSlice.reducer;

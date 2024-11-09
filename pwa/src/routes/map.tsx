@@ -18,11 +18,12 @@ import CameraView from "../assets/components/CameraView";
 import { useNavigate } from "react-router-dom";
 import { useAppDispatch, useAppSelector } from "../store";
 import { addItem } from "../store/backendSlice";
+import { resetForm } from "../store/formSlice";
 
 export default function Root() {
   const navigate = useNavigate();
 
-  const imageRef = useRef();
+  const imageRef = useRef<HTMLImageElement>();
 
   const dispatch = useAppDispatch();
 
@@ -31,7 +32,7 @@ export default function Root() {
   const [menuAnchorEl, setMenuAnchorEl] = useState(null);
   const [selectedItem, setSelectedItem] = useState(null);
 
-  const handleMenuOpen = (event: any, item) => {
+  const handleMenuOpen = (event: any, item: any) => {
     setMenuAnchorEl(event.currentTarget);
     setSelectedItem(item);
   };
@@ -93,8 +94,6 @@ export default function Root() {
           open={Boolean(menuAnchorEl)}
           onClose={handleMenuClose}
           placement="bottom-start"
-          disableAutoFocus
-          disableEnforceFocus
         >
           <MenuItem onClick={() => navigate(`/item/${selectedItem?.id}`)}>
             View Details
@@ -109,7 +108,13 @@ export default function Root() {
           </MenuItem>
         </Menu>
       </div>
-      <Button onClick={() => navigate("/adddevice")} color="primary">
+      <Button
+        onClick={() => {
+          dispatch(resetForm());
+          navigate("/camera");
+        }}
+        color="primary"
+      >
         Add a Device
       </Button>
     </Stack>
