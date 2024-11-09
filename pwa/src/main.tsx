@@ -7,7 +7,6 @@ import CameraView from './assets/components/CameraView'
 import AddDevice from './routes/add-device'
 import React from "react";
 import ReactDOM from "react-dom/client";
-import Root from "./routes/root";
 import Map from "./routes/map";
 import Bottombar from "./routes/bottom-bar";
 import CameraView from "./assets/components/CameraView";

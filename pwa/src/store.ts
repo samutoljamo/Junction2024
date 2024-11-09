@@ -1,16 +1,14 @@
 import { configureStore } from "@reduxjs/toolkit";
 import { useDispatch, useSelector, useStore } from "react-redux";
 import type { TypedUseSelectorHook } from "react-redux";
-import formReducer from "./formSlice";
-import { backend } from "./store/backend";
+import formReducer from "./store/formSlice";
+import backendReducer from "./store/backendSlice";
 
 export const store = configureStore({
   reducer: {
     form: formReducer,
-    [backend.reducerPath]: backend.reducer,
+    backend: backendReducer,
   },
-  middleware: (getDefaultMiddleware) =>
-    getDefaultMiddleware().concat(backend.middleware),
 });
 export type AppStore = typeof store;
 // Infer the `RootState` and `AppDispatch` types from the store itself
