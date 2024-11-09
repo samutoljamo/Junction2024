@@ -1,43 +1,79 @@
 import { emptySplitApi as api } from "../emptyApi";
 const injectedRtkApi = api.injectEndpoints({
   endpoints: (build) => ({
-    listPicturesApiPicturesGet: build.query<
-      ListPicturesApiPicturesGetApiResponse,
-      ListPicturesApiPicturesGetApiArg
+    getItemItemGet: build.query<
+      GetItemItemGetApiResponse,
+      GetItemItemGetApiArg
     >({
-      query: () => ({ url: `/api/pictures` }),
+      query: () => ({ url: `/item` }),
     }),
-    getItemPicturesApiItemsItemIdPicturesGet: build.query<
-      GetItemPicturesApiItemsItemIdPicturesGetApiResponse,
-      GetItemPicturesApiItemsItemIdPicturesGetApiArg
-    >({
-      query: (queryArg) => ({ url: `/api/items/${queryArg.itemId}/pictures` }),
-    }),
-    createItemCreateItemPost: build.mutation<
-      CreateItemCreateItemPostApiResponse,
-      CreateItemCreateItemPostApiArg
+    getAllItemsGetAllItemsForGivenFloorPost: build.mutation<
+      GetAllItemsGetAllItemsForGivenFloorPostApiResponse,
+      GetAllItemsGetAllItemsForGivenFloorPostApiArg
     >({
       query: (queryArg) => ({
-        url: `/create_item`,
+        url: `/get_all_items_for_given_floor`,
         method: "POST",
-        body: queryArg.itemBase,
-      }),
-    }),
-    createItemItemsPost: build.mutation<
-      CreateItemItemsPostApiResponse,
-      CreateItemItemsPostApiArg
-    >({
-      query: (queryArg) => ({
-        url: `/items/`,
-        method: "POST",
-        body: queryArg.itemBase,
+        params: {
+          floor_number: queryArg.floorNumber,
+        },
       }),
     }),
     createNewItemCreateNewItemGet: build.query<
       CreateNewItemCreateNewItemGetApiResponse,
       CreateNewItemCreateNewItemGetApiArg
     >({
-      query: () => ({ url: `/create_new_item` }),
+      query: (queryArg) => ({
+        url: `/create_new_item`,
+        body: queryArg.itemBaseInput,
+      }),
+    }),
+    modifyItemModifyItemGet: build.query<
+      ModifyItemModifyItemGetApiResponse,
+      ModifyItemModifyItemGetApiArg
+    >({
+      query: (queryArg) => ({
+        url: `/modify_item`,
+        body: queryArg.itemBaseInput,
+        params: {
+          item_id: queryArg.itemId,
+        },
+      }),
+    }),
+    deleteItemDeleteItemGet: build.query<
+      DeleteItemDeleteItemGetApiResponse,
+      DeleteItemDeleteItemGetApiArg
+    >({
+      query: (queryArg) => ({
+        url: `/delete_item`,
+        params: {
+          item_id: queryArg.itemId,
+        },
+      }),
+    }),
+    addVisitToItemAddVisitToItemGet: build.query<
+      AddVisitToItemAddVisitToItemGetApiResponse,
+      AddVisitToItemAddVisitToItemGetApiArg
+    >({
+      query: (queryArg) => ({
+        url: `/add_visit_to_item`,
+        body: queryArg.visitBase,
+        params: {
+          item_id: queryArg.itemId,
+        },
+      }),
+    }),
+    modifyVisitModifyVisitGet: build.query<
+      ModifyVisitModifyVisitGetApiResponse,
+      ModifyVisitModifyVisitGetApiArg
+    >({
+      query: (queryArg) => ({
+        url: `/modify_visit`,
+        body: queryArg.visitBase,
+        params: {
+          visit_id: queryArg.visitId,
+        },
+      }),
     }),
     uploadImageUploadtestPost: build.mutation<
       UploadImageUploadtestPostApiResponse,
@@ -65,27 +101,42 @@ const injectedRtkApi = api.injectEndpoints({
   overrideExisting: false,
 });
 export { injectedRtkApi as backend };
-export type ListPicturesApiPicturesGetApiResponse =
-  /** status 200 Successful Response */ Picture[];
-export type ListPicturesApiPicturesGetApiArg = void;
-export type GetItemPicturesApiItemsItemIdPicturesGetApiResponse =
-  /** status 200 Successful Response */ Picture[];
-export type GetItemPicturesApiItemsItemIdPicturesGetApiArg = {
-  itemId: number;
-};
-export type CreateItemCreateItemPostApiResponse =
-  /** status 200 Successful Response */ any;
-export type CreateItemCreateItemPostApiArg = {
-  itemBase: ItemBase;
-};
-export type CreateItemItemsPostApiResponse =
-  /** status 200 Successful Response */ Item;
-export type CreateItemItemsPostApiArg = {
-  itemBase: ItemBase;
+export type GetItemItemGetApiResponse =
+  /** status 200 Successful Response */ ItemBase;
+export type GetItemItemGetApiArg = void;
+export type GetAllItemsGetAllItemsForGivenFloorPostApiResponse =
+  /** status 200 Successful Response */ ItemBase[];
+export type GetAllItemsGetAllItemsForGivenFloorPostApiArg = {
+  floorNumber: number;
 };
 export type CreateNewItemCreateNewItemGetApiResponse =
-  /** status 200 Successful Response */ any;
-export type CreateNewItemCreateNewItemGetApiArg = void;
+  /** status 200 Successful Response */ ItemBase;
+export type CreateNewItemCreateNewItemGetApiArg = {
+  itemBaseInput: ItemBase2;
+};
+export type ModifyItemModifyItemGetApiResponse =
+  /** status 200 Successful Response */ ItemBase;
+export type ModifyItemModifyItemGetApiArg = {
+  itemId: number;
+  itemBaseInput: ItemBase2;
+};
+export type DeleteItemDeleteItemGetApiResponse =
+  /** status 200 Successful Response */ ItemBase;
+export type DeleteItemDeleteItemGetApiArg = {
+  itemId: number;
+};
+export type AddVisitToItemAddVisitToItemGetApiResponse =
+  /** status 200 Successful Response */ ItemBase;
+export type AddVisitToItemAddVisitToItemGetApiArg = {
+  itemId: number;
+  visitBase: VisitBase;
+};
+export type ModifyVisitModifyVisitGetApiResponse =
+  /** status 200 Successful Response */ VisitBase;
+export type ModifyVisitModifyVisitGetApiArg = {
+  visitId: number;
+  visitBase: VisitBase;
+};
 export type UploadImageUploadtestPostApiResponse =
   /** status 200 Successful Response */ ItemStructure;
 export type UploadImageUploadtestPostApiArg = void;
@@ -97,11 +148,30 @@ export type UploadImageUploadPostApiArg = {
 export type GetItemIdsItemIdsGetApiResponse =
   /** status 200 Successful Response */ any;
 export type GetItemIdsItemIdsGetApiArg = void;
-export type Picture = {
-  url: string;
+export type PictureBase = {
   id: number;
-  item_id: number;
-  created_at: string;
+  url: string;
+};
+export type VisitBase = {
+  id: number;
+  timestamp: number;
+  condition: string;
+  notes: string;
+  pictures?: PictureBase[];
+};
+export type ItemBase = {
+  id: number;
+  name: string;
+  x: number;
+  y: number;
+  floor: number;
+  serial_number: string | null;
+  material: string | null;
+  model: string | null;
+  manufacturer: string | null;
+  description: string | null;
+  manufacturing_year: number | null;
+  visits?: VisitBase[];
 };
 export type ValidationError = {
   loc: (string | number)[];
@@ -111,17 +181,21 @@ export type ValidationError = {
 export type HttpValidationError = {
   detail?: ValidationError[];
 };
-export type ItemBase = {
-  name: string;
-  description?: string | null;
-};
-export type Item = {
-  name: string;
-  description?: string | null;
+export type ItemBase2 = {
   id: number;
-  pictures?: Picture[];
+  name: string;
+  x: number;
+  y: number;
+  floor: number;
+  serial_number: string | null;
+  material: string | null;
+  model: string | null;
+  manufacturer: string | null;
+  description: string | null;
+  manufacturing_year: number | null;
+  visits?: VisitBase[];
 };
-export type ItemType =
+export type ItemTypeCategory =
   | "structure"
   | "ventilation"
   | "electrical"
@@ -131,7 +205,7 @@ export type ItemStructure = {
   /** The name of the equipment */
   equipment_name?: string | null;
   /** Type of the item */
-  equipment_type?: ItemType;
+  equipment_type?: ItemTypeCategory;
   /** The manufacturer of the item */
   manufacturer?: string | null;
   /** The manufacturing year of the item */
@@ -149,11 +223,13 @@ export type ImageUpload = {
   images: string[];
 };
 export const {
-  useListPicturesApiPicturesGetQuery,
-  useGetItemPicturesApiItemsItemIdPicturesGetQuery,
-  useCreateItemCreateItemPostMutation,
-  useCreateItemItemsPostMutation,
+  useGetItemItemGetQuery,
+  useGetAllItemsGetAllItemsForGivenFloorPostMutation,
   useCreateNewItemCreateNewItemGetQuery,
+  useModifyItemModifyItemGetQuery,
+  useDeleteItemDeleteItemGetQuery,
+  useAddVisitToItemAddVisitToItemGetQuery,
+  useModifyVisitModifyVisitGetQuery,
   useUploadImageUploadtestPostMutation,
   useUploadImageUploadPostMutation,
   useGetItemIdsItemIdsGetQuery,
