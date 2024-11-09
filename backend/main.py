@@ -1,10 +1,14 @@
 from fastapi import FastAPI, HTTPException, Depends
+from openai import OpenAI
+from enum import Enum
+import instructor
 from fastapi.staticfiles import StaticFiles
 from fastapi.responses import HTMLResponse, RedirectResponse
 from sqlalchemy import create_engine, Column, Integer, String, ForeignKey, DateTime
 from sqlalchemy.ext.declarative import declarative_base
 from sqlalchemy.orm import sessionmaker, relationship, Session
-from pydantic import BaseModel
+from pydantic import BaseModel, Field
+from dotenv import load_dotenv
 import base64
 from typing import Optional, List
 import io
@@ -19,6 +23,8 @@ SQLALCHEMY_DATABASE_URL = "sqlite:///./items.db"
 engine = create_engine(SQLALCHEMY_DATABASE_URL, connect_args={"check_same_thread": False})
 SessionLocal = sessionmaker(autocommit=False, autoflush=False, bind=engine)
 Base = declarative_base()
+
+load_dotenv()
 
 # SQLAlchemy Models
 class Building(Base):
@@ -54,16 +60,6 @@ class ItemDB(Base):
     building = relationship('Building', back_populates='items')
     type = relationship('ItemType', back_populates='items')
     visits = relationship("VisitDB", back_populates="item", cascade="all, delete-orphan")
-
-equipment_name: Optional[str] = Field(description="The name of the equipment", default="")
-    equipment_type: ItemType = Field(description="Type of the item", default=ItemType.other)
-    manufacturer: Optional[str] = Field(description="The manufacturer of the item", default=None)
-    manufacturing_year: Optional[int] = Field(description="The manufacturing year of the item", default=None)
-    model: Optional[str] = Field(description="The model of the item", default=None)
-    serial_number: Optional[str] = Field(description="The serial number of the device if found", default=None)
-    material: Optional[str] = Field(description="The material of the item", default=None)
-    surface_condition: Optional[str] = Field(description="The surface condition of the item", default=None)
-
 
 
 class VisitDB(Base):
@@ -172,7 +168,6 @@ class ItemStructure(BaseModel):
     material: Optional[str] = Field(description="The material of the item", default=None)
     surface_condition: Optional[str] = Field(description="The surface condition of the item", default=None)
 
-
 async def extract_item_info_from_image(base64_str: str) -> ItemStructure:
     try:
         if not base64_str.startswith("data:image"):
@@ -184,7 +179,7 @@ async def extract_item_info_from_image(base64_str: str) -> ItemStructure:
             messages=[
                 {
                     "role": "system",
-                    "content": "You are a system that always extracts information from images related to KONE devices and other structures."
+                    "content": "You are a system that always extracts information from images related to KONE devices and other structures.",
                     "role": "user",
                     "content": [
                         {
