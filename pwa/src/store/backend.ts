@@ -7,31 +7,73 @@ const injectedRtkApi = api.injectEndpoints({
     >({
       query: () => ({ url: `/item` }),
     }),
-    createItemCreateItemPost: build.mutation<
-      CreateItemCreateItemPostApiResponse,
-      CreateItemCreateItemPostApiArg
+    getAllItemsGetAllItemsForGivenFloorPost: build.mutation<
+      GetAllItemsGetAllItemsForGivenFloorPostApiResponse,
+      GetAllItemsGetAllItemsForGivenFloorPostApiArg
     >({
       query: (queryArg) => ({
-        url: `/create_item`,
+        url: `/get_all_items_for_given_floor`,
         method: "POST",
-        body: queryArg.itemBaseInput,
-      }),
-    }),
-    createItemItemsPost: build.mutation<
-      CreateItemItemsPostApiResponse,
-      CreateItemItemsPostApiArg
-    >({
-      query: (queryArg) => ({
-        url: `/items/`,
-        method: "POST",
-        body: queryArg.itemBaseInput,
+        params: {
+          floor_number: queryArg.floorNumber,
+        },
       }),
     }),
     createNewItemCreateNewItemGet: build.query<
       CreateNewItemCreateNewItemGetApiResponse,
       CreateNewItemCreateNewItemGetApiArg
     >({
-      query: () => ({ url: `/create_new_item` }),
+      query: (queryArg) => ({
+        url: `/create_new_item`,
+        body: queryArg.itemBaseInput,
+      }),
+    }),
+    modifyItemModifyItemGet: build.query<
+      ModifyItemModifyItemGetApiResponse,
+      ModifyItemModifyItemGetApiArg
+    >({
+      query: (queryArg) => ({
+        url: `/modify_item`,
+        body: queryArg.itemBaseInput,
+        params: {
+          item_id: queryArg.itemId,
+        },
+      }),
+    }),
+    deleteItemDeleteItemGet: build.query<
+      DeleteItemDeleteItemGetApiResponse,
+      DeleteItemDeleteItemGetApiArg
+    >({
+      query: (queryArg) => ({
+        url: `/delete_item`,
+        params: {
+          item_id: queryArg.itemId,
+        },
+      }),
+    }),
+    addVisitToItemAddVisitToItemGet: build.query<
+      AddVisitToItemAddVisitToItemGetApiResponse,
+      AddVisitToItemAddVisitToItemGetApiArg
+    >({
+      query: (queryArg) => ({
+        url: `/add_visit_to_item`,
+        body: queryArg.visitBase,
+        params: {
+          item_id: queryArg.itemId,
+        },
+      }),
+    }),
+    modifyVisitModifyVisitGet: build.query<
+      ModifyVisitModifyVisitGetApiResponse,
+      ModifyVisitModifyVisitGetApiArg
+    >({
+      query: (queryArg) => ({
+        url: `/modify_visit`,
+        body: queryArg.visitBase,
+        params: {
+          visit_id: queryArg.visitId,
+        },
+      }),
     }),
     uploadImageUploadtestPost: build.mutation<
       UploadImageUploadtestPostApiResponse,
@@ -62,19 +104,39 @@ export { injectedRtkApi as backend };
 export type GetItemItemGetApiResponse =
   /** status 200 Successful Response */ ItemBase;
 export type GetItemItemGetApiArg = void;
-export type CreateItemCreateItemPostApiResponse =
-  /** status 200 Successful Response */ any;
-export type CreateItemCreateItemPostApiArg = {
-  itemBaseInput: ItemBase2;
-};
-export type CreateItemItemsPostApiResponse =
-  /** status 200 Successful Response */ ItemBase;
-export type CreateItemItemsPostApiArg = {
-  itemBaseInput: ItemBase2;
+export type GetAllItemsGetAllItemsForGivenFloorPostApiResponse =
+  /** status 200 Successful Response */ ItemBase[];
+export type GetAllItemsGetAllItemsForGivenFloorPostApiArg = {
+  floorNumber: number;
 };
 export type CreateNewItemCreateNewItemGetApiResponse =
-  /** status 200 Successful Response */ any;
-export type CreateNewItemCreateNewItemGetApiArg = void;
+  /** status 200 Successful Response */ ItemBase;
+export type CreateNewItemCreateNewItemGetApiArg = {
+  itemBaseInput: ItemBase2;
+};
+export type ModifyItemModifyItemGetApiResponse =
+  /** status 200 Successful Response */ ItemBase;
+export type ModifyItemModifyItemGetApiArg = {
+  itemId: number;
+  itemBaseInput: ItemBase2;
+};
+export type DeleteItemDeleteItemGetApiResponse =
+  /** status 200 Successful Response */ ItemBase;
+export type DeleteItemDeleteItemGetApiArg = {
+  itemId: number;
+};
+export type AddVisitToItemAddVisitToItemGetApiResponse =
+  /** status 200 Successful Response */ ItemBase;
+export type AddVisitToItemAddVisitToItemGetApiArg = {
+  itemId: number;
+  visitBase: VisitBase;
+};
+export type ModifyVisitModifyVisitGetApiResponse =
+  /** status 200 Successful Response */ VisitBase;
+export type ModifyVisitModifyVisitGetApiArg = {
+  visitId: number;
+  visitBase: VisitBase;
+};
 export type UploadImageUploadtestPostApiResponse =
   /** status 200 Successful Response */ ItemStructure;
 export type UploadImageUploadtestPostApiArg = void;
@@ -162,9 +224,12 @@ export type ImageUpload = {
 };
 export const {
   useGetItemItemGetQuery,
-  useCreateItemCreateItemPostMutation,
-  useCreateItemItemsPostMutation,
+  useGetAllItemsGetAllItemsForGivenFloorPostMutation,
   useCreateNewItemCreateNewItemGetQuery,
+  useModifyItemModifyItemGetQuery,
+  useDeleteItemDeleteItemGetQuery,
+  useAddVisitToItemAddVisitToItemGetQuery,
+  useModifyVisitModifyVisitGetQuery,
   useUploadImageUploadtestPostMutation,
   useUploadImageUploadPostMutation,
   useGetItemIdsItemIdsGetQuery,
