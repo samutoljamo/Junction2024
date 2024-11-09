@@ -8,6 +8,16 @@ interface Visit {
   surveyor: string;
 }
 
+interface AddVisitPayload {
+  itemId: string;
+  visit: {
+    condition: string;
+    notes: string;
+    createdAt: string;
+    surveyor: string;
+  }
+}
+
 export interface Item {
   id: string;
   equipmentName: string;
@@ -71,6 +81,11 @@ export const backendSlice = createSlice({
     removeItem: (state, action: PayloadAction<string>) => {
       state.items = state.items.filter((item) => item.id !== action.payload);
     },
+    addVisit: (state, action: PayloadAction<AddVisitPayload>) => {
+      const item = state.items.find(item => item.id === action.payload.itemId);
+      if (item) {
+        item.visits.push(action.payload.visit);
+      }}
   },
 });
 
