@@ -4,7 +4,6 @@ import { Box, Button, Grid } from "@mui/joy";
 
 import KeyboardArrowRight from "@mui/icons-material/KeyboardArrowRight";
 
-import KeyboardArrowRight from "@mui/icons-material/KeyboardArrowRight";
 
 export default function Bottombar() {
   const navigate = useNavigate();
