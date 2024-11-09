@@ -4,7 +4,7 @@ import { v4 as uuidv4 } from "uuid";
 interface Visit {
   condition: string;
   notes: string;
-  createdAt: number;
+  createdAt: Date;
 }
 
 interface Item {
@@ -25,7 +25,26 @@ interface BackendSlice {
 }
 
 const initialState: BackendSlice = {
-  items: [],
+  items: [
+    {
+      id: "fdfdsfdsfds",
+      x: 0.1,
+      y: 0.2,
+      floor: 1,
+      serialNumber: "test",
+      material: "wood",
+      model: "model",
+      manufacturer: "dsffds",
+      description: "fdsdf",
+      visits: [
+        {
+          condition: "good",
+          notes: "fsdfds",
+          createdAt: new Date(2024, 11, 8),
+        },
+      ],
+    },
+  ],
 };
 
 export const backendSlice = createSlice({
