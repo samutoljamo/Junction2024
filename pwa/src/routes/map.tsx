@@ -33,6 +33,7 @@ export default function Root() {
   const [selectedItem, setSelectedItem] = useState(null);
 
   const handleMenuOpen = (event: any, item: any) => {
+    event.stopPropagation();
     setMenuAnchorEl(event.currentTarget);
     setSelectedItem(item);
   };
@@ -40,6 +41,11 @@ export default function Root() {
   const handleMenuClose = () => {
     setMenuAnchorEl(null);
     setSelectedItem(null);
+  };
+
+  const handleMenuItemClick = (action: () => void) => {
+    handleMenuClose();
+    action();
   };
 
   return (
@@ -58,13 +64,28 @@ export default function Root() {
             display: "block",
           }}
           onClick={(e) => {
+            if (menuAnchorEl) {
+              handleMenuClose();
+              return;
+            }
             const rect = imageRef.current?.getBoundingClientRect();
             dispatch(
               addItem({
                 x: (e.clientX - rect.left) / rect.width,
                 y: (e.clientY - rect.top) / rect.height,
                 floor: 1,
-                visits: [],
+                visits: [        {
+                  condition: "good",
+                  notes: "Stunning",
+                  createdAt: new Date(2024, 11, 8).toLocaleDateString(),
+                  surveyor: "Mike J",
+                },
+                {
+                  condition: "horrible",
+                  notes: "Very bad",
+                  createdAt: new Date(2024, 3, 2).toLocaleDateString(),
+                  surveyor: "Jake L",
+                },],
               })
             );
           }}
@@ -74,8 +95,8 @@ export default function Root() {
         {items.map((item) => (
           <div
             key={item.id}
-            onMouseEnter={(e) => handleMenuOpen(e, item)}
-            onMouseLeave={handleMenuClose}
+            //onMouseEnter={(e) => handleMenuOpen(e, item)}
+            onClick={(e) => handleMenuOpen(e, item)}
             style={{
               position: "absolute",
               top: `${item.y * 100}%`,
@@ -95,16 +116,16 @@ export default function Root() {
           onClose={handleMenuClose}
           placement="bottom-start"
         >
-          <MenuItem onClick={() => navigate(`/item/${selectedItem?.id}`)}>
-            View Details
+          <MenuItem onClick={() => handleMenuItemClick(() => navigate(`/item/${selectedItem?.id}`))}>
+            Add new visit
           </MenuItem>
-          <MenuItem onClick={() => console.log("Edit item", selectedItem?.id)}>
-            Edit
+          <MenuItem onClick={() => handleMenuItemClick(() => navigate(`/previous-visits/${selectedItem?.id}`))}>
+            View previous visits
           </MenuItem>
           <MenuItem
-            onClick={() => console.log("Delete item", selectedItem?.id)}
+            onClick={() => handleMenuItemClick(() => console.log("Delete item", selectedItem?.id))}
           >
-            Delete
+            Replace device
           </MenuItem>
         </Menu>
       </div>
