@@ -156,6 +156,13 @@ export default function Root() {
           
       </div>
       <Button
+        style={{
+          backgroundColor: "#542DAE",
+          fontWeight: "400",
+          marginTop: "15px",
+          boxShadow: "1px 2px 4px 0 rgba(0,0,0,0.35)",
+          borderRadius: "10px"
+        }}
         onClick={() => {
           dispatch(resetForm());
           navigate("/camera");
