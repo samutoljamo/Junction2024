@@ -139,12 +139,8 @@ async def extract_item_info_from_images(base64_str_images: list[str]) -> ItemStr
     except Exception as e:
         raise HTTPException(status_code=500, detail=f"Vision API error: {str(e)}")
 
-
-# Endpoint that returns the hardcoded item data
-@app.get("/item", response_model=ItemBase)
-def get_item():
-    example_item = ItemDB(
-        id=1,
+def return_example_item():
+    return ItemDB(
         name="Grand Piano",
         x=15,
         y=30,
@@ -199,12 +195,24 @@ def get_item():
             )
         ]
     )
-    return example_item
 
-@app.post("/get_all_items_for_given_floor", response_model=List[ItemBase])
-async def get_all_items(floor_number: int, db: Session = Depends(get_db)):
-    items = db.query(ItemDB).filter(ItemDB.floor == floor_number).all()
-    return items
+# Endpoint that returns the hardcoded item data
+@app.get("/item", response_model=ItemBase)
+def get_item():
+    return return_example_item() 
+
+@app.get("/save_example_item")
+async def save_example_item(db: Session = Depends(get_db)):
+    item = return_example_item()
+    db.add(item)
+    db.commit()
+    db.refresh(item)
+    return item
+
+@app.post("/get_all_items_for_given_floor", response_model=ListOfItems)
+async def get_all_items(request: FloorRequest, db: Session = Depends(get_db)):
+    items = db.query(ItemDB).filter(ItemDB.floor == request.floor_number).all()
+    return items 
 
 
 @app.get("/create_new_item", response_model=ItemBase)
@@ -216,8 +224,8 @@ async def create_new_item(item: ItemBase, db: Session = Depends(get_db)):
     return new_item
 
 @app.get("/modify_item", response_model=ItemBase)
-async def modify_item(item_id: int, item: ItemBase, db: Session = Depends(get_db)):
-    item_to_modify = db.query(ItemDB).filter(ItemDB.id == item_id).first()
+async def modify_item(request: ItemRequest, item: ItemBase, db: Session = Depends(get_db)):
+    item_to_modify = db.query(ItemDB).filter(ItemDB.id == request.item_id).first()
     if item_to_modify is None:
         raise HTTPException(status_code=404, detail="Item not found")
     for key, value in item.dict().items():
@@ -227,8 +235,8 @@ async def modify_item(item_id: int, item: ItemBase, db: Session = Depends(get_db
     return item_to_modify
 
 @app.get("/delete_item", response_model=ItemBase)
-async def delete_item(item_id: int, db: Session = Depends(get_db)):
-    item_to_delete = db.query(ItemDB).filter(ItemDB.id == item_id).first()
+async def delete_item(request: ItemRequest, db: Session = Depends(get_db)):
+    item_to_delete = db.query(ItemDB).filter(ItemDB.id == request.item_id).first()
     if item_to_delete is None:
         raise HTTPException(status_code=404, detail="Item not found")
     db.delete(item_to_delete)
@@ -236,8 +244,8 @@ async def delete_item(item_id: int, db: Session = Depends(get_db)):
     return item_to_delete
 
 @app.get("/add_visit_to_item", response_model=ItemBase)
-async def add_visit_to_item(item_id: int, visit: VisitBase, db: Session = Depends(get_db)):
-    item = db.query(ItemDB).filter(ItemDB.id == item_id).first()
+async def add_visit_to_item(request: ItemRequest, visit: VisitBase, db: Session = Depends(get_db)):
+    item = db.query(ItemDB).filter(ItemDB.id == request.item_id).first()
     if item is None:
         raise HTTPException(status_code=404, detail="Item not found")
     new_visit = VisitDB(**visit.dict(), item_id=item_id)
@@ -247,8 +255,8 @@ async def add_visit_to_item(item_id: int, visit: VisitBase, db: Session = Depend
     return item
 
 @app.get("/modify_visit", response_model=VisitBase)
-async def modify_visit(visit_id: int, visit: VisitBase, db: Session = Depends(get_db)):
-    visit_to_modify = db.query(VisitDB).filter(VisitDB.id == visit_id).first()
+async def modify_visit(request: VisitRequest, visit: VisitBase, db: Session = Depends(get_db)):
+    visit_to_modify = db.query(VisitDB).filter(VisitDB.id == request.visit_id).first()
     if visit_to_modify is None:
         raise HTTPException(status_code=404, detail="Visit not found")
     for key, value in visit.dict().items():

@@ -68,6 +68,15 @@ class PictureDB(Base):
 from pydantic import BaseModel
 from typing import List, Optional
 
+class VisitRequest(BaseModel):
+    visit_id: int
+
+class ItemRequest(BaseModel):
+    item_id: int
+
+class FloorRequest(BaseModel):
+    floor_number: int
+
 class PictureBase(BaseModel):
     id: int
     url: str
@@ -101,6 +110,9 @@ class ItemBase(BaseModel):
 
     class Config:
         orm_mode = True
+
+class ListOfItems(BaseModel):
+    items: List[ItemBase]
 
 class BuildingBase(BaseModel):
     id: int
