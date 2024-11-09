@@ -10,7 +10,6 @@ export function gpsToNormalized(
   lat: number,
   lon: number
 ): { x: number; y: number } {
-<<<<<<< HEAD
     const R = { y: lat, x: lon };
     const top_left = { y: 60.162410, x: 24.905575 } // Top-left corner
     const top_right = { y: 60.161860, x: 24.905884 } // Top-right corner
@@ -55,23 +54,3 @@ function closestPointOnLine(P: Point, Q: Point, R: Point): Point {
 }
 
 
-=======
-  const top_left = { lat: 60.16241, lon: 24.905575 }; // Top-left corner
-  const top_right = { lat: 60.16186, lon: 24.905884 }; // Top-right corner
-  const bottom_right = { lat: 60.161362, lon: 24.902548 }; // Bottom-right corner
-  const bottom_left = { lat: 60.161887, lon: 24.902215 }; // Bottom-left corner
-
-  const y =
-    Math.sqrt((lat - top_left.lat) ** 2 + (lon - top_left.lon) ** 2) /
-    Math.sqrt(
-      (bottom_left.lat - top_left.lat) ** 2 +
-        (bottom_left.lon - top_left.lon) ** 2
-    );
-  const x =
-    Math.sqrt((lat - top_left.lat) ** 2 + (lon - top_left.lon) ** 2) /
-    Math.sqrt(
-      (top_right.lat - top_left.lat) ** 2 + (top_right.lon - top_left.lon) ** 2
-    );
-  return { x, y };
-}
->>>>>>> f3eac7ee64ad9ba3c0714fe50165b08fda9c9537
