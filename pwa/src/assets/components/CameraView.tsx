@@ -11,75 +11,83 @@ export default function CameraView() {
   const dispatch = useAppDispatch();
 
   return (
-    <Stack
-      spacing={2}
-      alignItems="center"
-      sx={{ width: "100%", mx: "auto", p: 2 }}
+    <Box
+      sx={{
+        display: "flex",
+        flexDirection: "column",
+        justifyContent: "flex-start",
+        height: "100vh",
+        width: "100vw",
+        backgroundColor: "background.level1",
+        alignItems: "center",
+        paddingTop: 2,
+      }}
     >
-      <Camera  facingMode={"environment"} ref={camera} errorMessages={{}} aspectRatio={1} />
-      <Typography>Images</Typography>
-      <Grid container spacing={1} justifyContent="center">
-        {images.map((image, index) => (
-          <Grid
-            xs={4}
-            key={index}
-            onClick={() => {
-              dispatch(removeImage(image.id));
-            }}
-          >
-            <img
-              src={image.data}
-              alt={`Captured ${index}`}
-              style={{
-                width: "100%",
-                borderRadius: "8px",
+        <Camera facingMode={"environment"} ref={camera} errorMessages={{}} aspectRatio={1
+
+        } />
+        <Typography>Images</Typography>
+        <Grid container spacing={1} justifyContent="center">
+          {images.map((image, index) => (
+            <Grid
+              xs={4}
+              key={index}
+              onClick={() => {
+                dispatch(removeImage(image.id));
               }}
-            />
-          </Grid>
-        ))}
-      </Grid>
+            >
+              <img
+                src={image.data}
+                alt={`Captured ${index}`}
+                style={{
+                  width: "100%",
+                  borderRadius: "8px",
+                }}
+              />
+            </Grid>
+          ))}
+        </Grid>
 
-      <Box flexGrow={1} />
-      <Button
-        disabled={images.length > 2}
-        onClick={() => {
-          if (camera.current) {
-            const capturedImage = camera.current.takePhoto();
-            dispatch(addImage(capturedImage));
-          }
-        }}
-      >
-        Capture Image
-      </Button>
-      <NavLink to="/map">Next</NavLink>
-      <div>
-      <input type="file" id="fileInput" onChange={()=>{
-        const fileInput:any = document.getElementById('fileInput');
-        const file = fileInput.files[0]; // Get the first file selected
-        if (file) {
-            // Create a new FileReader instance
-            const reader = new FileReader();
-          
-            // Define the onload event for when the file is read
-            reader.onload = function(event:any) {
-              // The result contains the Base64 string
-              const base64String = event.target.result;
-          
-              // Log the Base64 string or use it as needed
-              console.log(base64String);
-              dispatch(addImage(base64String));
-            };
-          
-            // Read the file as a Data URL (Base64 encoded)
-            reader.readAsDataURL(file);
-          } else {
-            alert('Please select a file first!');
-          }
-        
-      }} accept="image/*"/>
+        <Box flexGrow={1} />
+        <Button
+          disabled={images.length > 2}
+          onClick={() => {
+            if (camera.current) {
+              const capturedImage = camera.current.takePhoto();
+              dispatch(addImage(capturedImage));
+            }
+          }}
+        >
+          Capture Image
+        </Button>
+        <NavLink to="/information">Add device</NavLink>
+        <div>
+          <input type="file" id="fileInput" onChange={() => {
+            const fileInput: any = document.getElementById('fileInput');
+            const file = fileInput.files[0]; // Get the first file selected
+            if (file) {
+              // Create a new FileReader instance
+              const reader = new FileReader();
 
-      </div>
-      
-    </Stack>
+              // Define the onload event for when the file is read
+              reader.onload = function (event: any) {
+                // The result contains the Base64 string
+                const base64String = event.target.result;
+
+                // Log the Base64 string or use it as needed
+                console.log(base64String);
+                dispatch(addImage(base64String));
+              };
+
+              // Read the file as a Data URL (Base64 encoded)
+              reader.readAsDataURL(file);
+            } else {
+              alert('Please select a file first!');
+            }
+
+          }} accept="image/*" />
+
+        </div>
+    </Box>
   );
 }

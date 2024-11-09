@@ -3,8 +3,12 @@ import { CssVarsProvider } from "@mui/joy/styles";
 import { Box, Button, CssBaseline, IconButton, Tooltip, Typography, Modal } from "@mui/joy";
 import RoomIcon from "@mui/icons-material/Room";
 import map_image from "../assets/kaapelitehdas_ifc_from_top 1.png";
+import CameraView from "../assets/components/CameraView";
+import { useNavigate } from "react-router-dom";
 
 export default function Root() {
+
+  const navigate = useNavigate();
   interface Machine {
     id: number;
     x: number;
@@ -13,9 +17,9 @@ export default function Root() {
   }
 
   const initialMachines: Machine[] = [
-    { id: 1, x: 100, y: 200, name: "Electric main" },
-    { id: 2, x: 100, y: 450, name: "Motor" },
-    { id: 3, x: 250, y: 50, name: "Fuses" },
+    { id: 1, x: 120, y: 250, name: "Electric main" },
+    { id: 2, x: 120, y: 450, name: "Motor" },
+    { id: 3, x: 250, y: 150, name: "Fuses" },
   ];
 
   const [machines, setMachines] = useState<Machine[]>(initialMachines);
@@ -61,9 +65,7 @@ export default function Root() {
           paddingTop: 2,
         }}
       >
-        <Typography level="h4" sx={{ marginBottom: 2 }}>
-          Kaapelitehdas
-        </Typography>
+
 
         {/* Labels Section: */}
         <Box sx={{ display: "flex", justifyContent: "center", marginBottom: 2 }}>
@@ -91,13 +93,16 @@ export default function Root() {
             backgroundColor: "background.level2",
             borderRadius: "8px",
             boxShadow: "0 4px 12px rgba(0,0,0,0.2)",
-            
+
           }}
         >
-          <Typography sx={{ marginBottom: 2 }}>Open the device info by pressing on it</Typography>
+          <Typography level="h4" sx={{ marginTop: 1 }}>
+            Kaapelitehdas
+          </Typography>
+          <Typography sx={{ marginBottom: 0 }}>Press to open info</Typography>
 
           {/* Map Image Box */}
-          <Box            
+          <Box
             sx={{
               width: "90%",
               height: "90%",
@@ -133,11 +138,11 @@ export default function Root() {
             </Tooltip>
           ))}
           <Button
-            onClick={handleAddNewDevice}
+            onClick={() => navigate('/adddevice')}
             sx={{
               backgroundColor: "gray",
               color: "white",
-              marginBottom: 2,
+              margin: 1,
               "&:hover": {
                 backgroundColor: "darkgray",
               },

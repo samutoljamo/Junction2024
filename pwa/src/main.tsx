@@ -1,10 +1,15 @@
+import React from 'react'
+import ReactDOM from 'react-dom/client'
+import Root from "./routes/root"
+import Map from "./routes/map"
+import Bottombar from './routes/bottom-bar'
+import CameraView from './assets/components/CameraView'
+import AddDevice from './routes/add-device'
 import React from "react";
 import ReactDOM from "react-dom/client";
 import Root from "./routes/root";
 import Map from "./routes/map";
 import Bottombar from "./routes/bottom-bar";
-import ConfirmData from "./routes/confirm-data";
-import ConfirmCondition from "./routes/confirm-condition";
 import CameraView from "./assets/components/CameraView";
 
 import {
@@ -27,10 +32,9 @@ ReactDOM.createRoot(document.getElementById("root")!).render(
         <Routes>
           <Route path="/" element={<Map />} />
           <Route path="/bottombar" element={<Bottombar />} />
-          <Route path="/information" element={<SerialNumberModel />} />
-          <Route path="/confirmdata" element={<ConfirmData />} />
-          <Route path="/confirmcondition" element={<ConfirmCondition />} />
-          <Route path="/camera" element={<CameraView />} />
+          <Route path="/information" element={<SerialNumberModel />}/>
+          <Route path="/camera" element={<CameraView />}/>
+          <Route path="/adddevice" element={<AddDevice />}/>
         </Routes>
         {/* <Bottombar /> */}
       </Router>
