@@ -10,10 +10,10 @@ import {
   setModel,
   setSerialNumber,
   setTypeOfMaterial,
-} from "../formSlice";
+} from "../store/formSlice";
 
 export function useFormFill() {
-  const [uploadImage, { data, isLoading}] = useUploadImageUploadPostMutation();
+  const [uploadImage, { data, isLoading }] = useUploadImageUploadPostMutation();
   const images = useAppSelector((state) => state.form.images);
   const dispatch = useAppDispatch();
   useEffect(() => {
@@ -56,6 +56,6 @@ export function useFormFill() {
         });
       }
     },
-    isLoading
-  }
+    isLoading,
+  };
 }

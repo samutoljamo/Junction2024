@@ -1,12 +1,12 @@
-import { Camera } from "react-camera-pro";
+import { Camera, CameraType } from "react-camera-pro";
 import { useRef } from "react";
 import { Button, Stack, Typography, Grid, Box } from "@mui/joy";
 import { useAppSelector, useAppDispatch } from "../../store";
-import { addImage, removeImage } from "../../formSlice";
+import { addImage, removeImage } from "../../store/formSlice";
 import { NavLink } from "react-router-dom";
 
 export default function CameraView() {
-  const camera = useRef(null);
+  const camera = useRef<CameraType>(null);
   const images = useAppSelector((state) => state.form.images);
   const dispatch = useAppDispatch();
 
@@ -23,47 +23,53 @@ export default function CameraView() {
         paddingTop: 2,
       }}
     >
-        <Camera facingMode={"environment"} ref={camera} errorMessages={{}} aspectRatio={1
-
-        } />
-        <Typography>Images</Typography>
-        <Grid container spacing={1} justifyContent="center">
-          {images.map((image, index) => (
-            <Grid
-              xs={4}
-              key={index}
-              onClick={() => {
-                dispatch(removeImage(image.id));
+      <Camera
+        facingMode={"environment"}
+        ref={camera}
+        errorMessages={{}}
+        aspectRatio={1}
+      />
+      <Typography>Images</Typography>
+      <Grid container spacing={1} justifyContent="center">
+        {images.map((image, index) => (
+          <Grid
+            xs={4}
+            key={index}
+            onClick={() => {
+              dispatch(removeImage(image.id));
+            }}
+          >
+            <img
+              src={image.data}
+              alt={`Captured ${index}`}
+              style={{
+                width: "100%",
+                borderRadius: "8px",
               }}
-            >
-              <img
-                src={image.data}
-                alt={`Captured ${index}`}
-                style={{
-                  width: "100%",
-                  borderRadius: "8px",
-                }}
-              />
-            </Grid>
-          ))}
-        </Grid>
+            />
+          </Grid>
+        ))}
+      </Grid>
 
-        <Box flexGrow={1} />
-        <Button
-          disabled={images.length > 2}
-          onClick={() => {
-            if (camera.current) {
-              const capturedImage = camera.current.takePhoto();
-              dispatch(addImage(capturedImage));
-            }
-          }}
-        >
-          Capture Image
-        </Button>
-        <NavLink to="/information">Add device</NavLink>
-        <div>
-          <input type="file" id="fileInput" onChange={() => {
-            const fileInput: any = document.getElementById('fileInput');
+      <Box flexGrow={1} />
+      <Button
+        disabled={images.length > 2}
+        onClick={() => {
+          if (camera.current) {
+            const capturedImage = camera.current.takePhoto();
+            dispatch(addImage(capturedImage));
+          }
+        }}
+      >
+        Capture Image
+      </Button>
+      <NavLink to="/information">Add device</NavLink>
+      <div>
+        <input
+          type="file"
+          id="fileInput"
+          onChange={() => {
+            const fileInput: any = document.getElementById("fileInput");
             const file = fileInput.files[0]; // Get the first file selected
             if (file) {
               // Create a new FileReader instance
@@ -82,12 +88,12 @@ export default function CameraView() {
               // Read the file as a Data URL (Base64 encoded)
               reader.readAsDataURL(file);
             } else {
-              alert('Please select a file first!');
+              alert("Please select a file first!");
             }
-
-          }} accept="image/*" />
-
-        </div>
+          }}
+          accept="image/*"
+        />
+      </div>
     </Box>
   );
 }

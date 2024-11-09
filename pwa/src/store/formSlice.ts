@@ -15,6 +15,7 @@ interface FormSlice {
   condition: string;
   freeComment: string;
   manufacturingYear: number | null;
+  floor: number;
 }
 
 const initialState: FormSlice = {
@@ -30,6 +31,7 @@ const initialState: FormSlice = {
   typeOfMaterial: "",
   condition: "",
   freeComment: "",
+  floor: 1,
 };
 let id = 0;
 export const formSlice = createSlice({
@@ -80,6 +82,9 @@ export const formSlice = createSlice({
     setFreeComment: (state, action: PayloadAction<string>) => {
       state.freeComment = action.payload;
     },
+    setFloor: (state, action: PayloadAction<number>) => {
+      state.floor = action.payload;
+    },
   },
 });
 
@@ -98,6 +103,7 @@ export const {
   setTypeOfMaterial,
   setCondition,
   setFreeComment,
+  setFloor,
 } = formSlice.actions;
 
 export default formSlice.reducer;

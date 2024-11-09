@@ -6,17 +6,13 @@ import FormControl from "@mui/joy/FormControl";
 import FormLabel from "@mui/joy/FormLabel";
 import Input from "@mui/joy/Input";
 import Button from "@mui/joy/Button";
-import Link from "@mui/joy/Link";
 import { ButtonGroup, Select } from "@mui/joy";
 import Textarea from "@mui/joy/Textarea";
-import Box from "@mui/joy";
 import { useSelector, useDispatch } from "react-redux";
-import { formSlice } from "../../formSlice";
 import { Option } from "@mui/joy";
-import { useNavigate } from 'react-router-dom';
-import CircularProgress from '@mui/joy/CircularProgress';
-import Stack from '@mui/joy/Stack';
-
+import { useNavigate } from "react-router-dom";
+import CircularProgress from "@mui/joy/CircularProgress";
+import Stack from "@mui/joy/Stack";
 
 import {
   setEquipmentName,
@@ -30,24 +26,22 @@ import {
   setTypeOfMaterial,
   setCondition,
   setFreeComment,
-} from "../../formSlice";
-import { useUploadImageUploadPostMutation } from "../../store/backend";
+} from "../../store/formSlice";
+
 import { useAppSelector } from "../../store";
 import { useFormFill } from "../../hooks";
 
 export default function SerialNumberModel() {
   const navigate = useNavigate();
   const dispatch = useDispatch();
-  const images = useAppSelector((state) => state.form.images);
 
-  const {fillForm,isLoading} = useFormFill();
+  const { fillForm, isLoading } = useFormFill();
 
   React.useEffect(() => {
     fillForm();
   }, []);
   // Get the form values from the Redux store
   let form = useAppSelector((state) => state.form);
-  console.log(form.equipmentName);
   return (
     <main>
       <Sheet
@@ -66,30 +60,24 @@ export default function SerialNumberModel() {
         variant="outlined"
       >
         <div>
-        {isLoading ? (
-                <Stack
-                direction="row"
-                spacing={2}
-                >
-                    <CircularProgress/>
-                    <Typography level="h4" component="h1">
+          {isLoading ? (
+            <Stack direction="row" spacing={2}>
+              <CircularProgress />
+              <Typography level="h4" component="h1">
                 <b>Processing image</b>
-            </Typography>
-                    
-                </Stack>
-         ) : (
-        <>        
-                <Typography level="h4" component="h1">
+              </Typography>
+            </Stack>
+          ) : (
+            <>
+              <Typography level="h4" component="h1">
                 <b>Device information</b>
-            </Typography>
-            
-            <Typography level="body-sm">
+              </Typography>
+
+              <Typography level="body-sm">
                 Verify the information collected from image.
-            </Typography></>
-         )}
-       
-            
-  
+              </Typography>
+            </>
+          )}
         </div>
         <FormControl>
           <FormLabel>Serial Number</FormLabel>
@@ -146,7 +134,11 @@ export default function SerialNumberModel() {
           <Select
             name="equipmentType"
             value={form.equipmentType}
-            onChange={(event, newValue) => dispatch(setEquipmentType(newValue))}
+            onChange={(event, newValue) => {
+              if (newValue) {
+                dispatch(setEquipmentType(newValue));
+              }
+            }}
           >
             <Option value="structure">Structure</Option>
             <Option value="ventilation">Ventilation</Option>
@@ -171,7 +163,7 @@ export default function SerialNumberModel() {
           <Input
             name="age"
             type="number"
-            value={form.age}
+            value={form.manufacturingYear?.toString()}
             onChange={(e) =>
               dispatch(setManufacturingYear(e.target.valueAsNumber))
             }
@@ -193,7 +185,11 @@ export default function SerialNumberModel() {
           <Select
             name="condition"
             value={form.condition}
-            onChange={(event, newValue) => dispatch(setCondition(newValue))}
+            onChange={(event, newValue) => {
+              if (newValue) {
+                dispatch(setCondition(newValue));
+              }
+            }}
           >
             <Option value="new">New</Option>
             <Option value="good">Good</Option>
@@ -212,7 +208,13 @@ export default function SerialNumberModel() {
           />
         </FormControl>
         <ButtonGroup spacing="9.5rem" aria-label="spacing button group">
-          <Button onClick={function () {navigate('/map');}}>Back</Button>
+          <Button
+            onClick={function () {
+              navigate("/map");
+            }}
+          >
+            Back
+          </Button>
           <Button onClick={function () {}} variant="solid" color="primary">
             Add device
           </Button>
