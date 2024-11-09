@@ -30,7 +30,7 @@ export default function Locate() {
     <Stack alignItems="center" alignContent="center" justifyContent="center">
       <Typography level="h1">Add Device</Typography>
       <Typography sx={{ marginBottom: 0 }}>
-        Press to correct position
+        Press the map choose the device location
       </Typography>
       <div style={{ position: "relative", display: "inline-block" }}>
         <img
