@@ -44,13 +44,13 @@ const initialState: BackendSlice = {
         {
           condition: "good",
           notes: "Stunning",
-          createdAt: new Date(2024, 11, 8).toISOString(),
+          createdAt: new Date(2024, 11, 8).toLocaleDateString(),
           surveyor: "Mike J",
         },
         {
           condition: "horrible",
           notes: "Very bad",
-          createdAt: new Date(2024, 3, 2).toISOString(),
+          createdAt: new Date(2024, 3, 2).toLocaleDateString(),
           surveyor: "Jake L",
         },
       ],
