@@ -1,11 +1,33 @@
-import React from 'react';
-import { Box, Button, Grid, Item } from '@mui/joy';
+import { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
+import { Box, Button, Grid } from '@mui/material';
 
 export default function Bottombar() {
     const navigate = useNavigate();
 
-  
+    const routes = ["/map", "/", "/confirmdata", "/confirmcondition"];
+    
+    // Use state to track the current index in the route list
+    const [currentIndex, setCurrentIndex] = useState(0);
+
+    const handleNextRoute = () => {
+        // Increment the index and handle loop around
+        const nextIndex = (currentIndex + 1) % routes.length; // This ensures it loops back to the first route
+        setCurrentIndex(nextIndex); // Update the state with the next index
+
+        // Navigate to the next route
+        navigate(routes[nextIndex]);
+    };
+
+    const handlePreviousRoute = () => {
+        // Decrement the index and handle loop around (if going back from the first route)
+        const prevIndex = (currentIndex - 1 + routes.length) % routes.length; // This ensures it loops to the last route
+        setCurrentIndex(prevIndex); // Update the state with the previous index
+
+        // Navigate to the previous route
+        navigate(routes[prevIndex]);
+    };
+
     return (
         <Box
             sx={{
@@ -19,25 +41,21 @@ export default function Bottombar() {
             }}
         >
             <Grid container spacing={2}>
-                <Grid alignItems="center" justifyContent="center" xs={6}>
+                <Grid item xs={6} alignItems="center" justifyContent="center">
                     <Button
-                         onClick={() => navigate("/map")}
-                        variant="solid"
+                        onClick={handlePreviousRoute} // Use the backward navigation here
                         sx={{ margin: 2 }}
                     >
-                        Map
+                        Back
                     </Button>
                 </Grid>
-                <Grid xs={6}>
+                <Grid item xs={6}>
                     <Button
-                        
-                        onClick={() => navigate("/")}
-                        variant="solid"
+                        onClick={handleNextRoute}
                         sx={{ margin: 2 }}
                     >
-                        I am here
+                        Next
                     </Button>
-                    {/* You can add another button or content here */}
                 </Grid>
             </Grid>
         </Box>
