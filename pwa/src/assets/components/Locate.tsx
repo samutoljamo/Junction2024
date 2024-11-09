@@ -20,7 +20,7 @@ export default function Locate() {
     <Stack alignItems="center" alignContent="center" justifyContent="center">
       <Typography level="h1">Locate device</Typography>
       <Typography sx={{ marginBottom: 0 }}>
-        Press to correct position
+        Select correct location for the device
       </Typography>
       <div style={{ position: "relative", display: "inline-block" }}>
         <img
@@ -58,10 +58,13 @@ export default function Locate() {
       <Box flexGrow={1} />
       <Stack direction="row" spacing={2} p={2}>
         <NavLink to="/camera">
-          <Button>Back</Button>
+          <Button 
+          color="neutral"
+          variant="outlined">Back</Button>
         </NavLink>
         <NavLink to="/information">
           <Button
+          color="success"
             disabled={coords === null}
             onClick={() => {
               if (!coords) return;
