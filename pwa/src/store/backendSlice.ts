@@ -4,7 +4,7 @@ import { v4 as uuidv4 } from "uuid";
 interface Visit {
   condition: string;
   notes: string;
-  createdAt: Date;
+  createdAt: string;
 }
 
 interface Item {
@@ -12,11 +12,11 @@ interface Item {
   x: number;
   y: number;
   floor: number;
-  serialNumber: string;
-  material: string;
-  model: string;
-  manufacturer: string;
-  description: string;
+  serialNumber?: string;
+  material?: string;
+  model?: string;
+  manufacturer?: string;
+  description?: string;
   visits: Visit[];
 }
 
@@ -40,7 +40,7 @@ const initialState: BackendSlice = {
         {
           condition: "good",
           notes: "fsdfds",
-          createdAt: new Date(2024, 11, 8),
+          createdAt: new Date(2024, 11, 8).toISOString(),
         },
       ],
     },

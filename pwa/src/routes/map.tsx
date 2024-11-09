@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useState, useRef } from "react";
 import { CssVarsProvider } from "@mui/joy/styles";
 import {
   Box,
@@ -8,191 +8,110 @@ import {
   Tooltip,
   Typography,
   Modal,
+  Stack,
+  Menu,
+  MenuItem,
 } from "@mui/joy";
 import RoomIcon from "@mui/icons-material/Room";
 import map_image from "../assets/kaapelitehdas_ifc_from_top 1.png";
 import CameraView from "../assets/components/CameraView";
 import { useNavigate } from "react-router-dom";
+import { useAppDispatch, useAppSelector } from "../store";
+import { addItem } from "../store/backendSlice";
 
 export default function Root() {
   const navigate = useNavigate();
-  interface Machine {
-    id: number;
-    x: number;
-    y: number;
-    name: string;
-  }
 
-  const initialMachines: Machine[] = [
-    { id: 1, x: 120, y: 250, name: "Electric main" },
-    { id: 2, x: 120, y: 450, name: "Motor" },
-    { id: 3, x: 250, y: 150, name: "Fuses" },
-  ];
+  const imageRef = useRef();
 
-  const [machines, setMachines] = useState<Machine[]>(initialMachines);
-  const [activeMachineId, setActiveMachineId] = useState<number | null>(null);
-  const [openModal, setOpenModal] = useState(false);
-  const [selectedMachine, setSelectedMachine] = useState<Machine | null>(null);
+  const dispatch = useAppDispatch();
 
-  const handleMachineClick = (machine: Machine) => {
-    setActiveMachineId(machine.id);
-    setSelectedMachine(machine);
-    setOpenModal(true); // Open modal with machine info
+  const items = useAppSelector((state) => state.backend.items);
+
+  const [menuAnchorEl, setMenuAnchorEl] = useState(null);
+  const [selectedItem, setSelectedItem] = useState(null);
+
+  const handleMenuOpen = (event: any, item) => {
+    setMenuAnchorEl(event.currentTarget);
+    setSelectedItem(item);
   };
 
-  const handleCloseModal = () => {
-    setOpenModal(false);
-    setSelectedMachine(null);
-  };
-
-  // Handle the creation of a new machine
-  const handleAddNewDevice = () => {
-    const newMachine: Machine = {
-      id: machines.length + 1, // or use a more robust ID generation method
-      x: Math.random() * 200, // Random X position for the new machine
-      y: Math.random() * 200, // Random Y position for the new machine
-      name: `New Device ${machines.length + 1}`,
-    };
-
-    setMachines([...machines, newMachine]); // Add the new machine to the list
+  const handleMenuClose = () => {
+    setMenuAnchorEl(null);
+    setSelectedItem(null);
   };
 
   return (
-    <CssVarsProvider>
-      <CssBaseline />
-      <Box
-        sx={{
-          display: "flex",
-          flexDirection: "column",
-          justifyContent: "flex-start",
-          height: "100vh",
-          width: "100vw",
-          backgroundColor: "background.level1",
-          alignItems: "center",
-          paddingTop: 2,
-        }}
-      >
-        {/* Labels Section: */}
-        <Box
-          sx={{ display: "flex", justifyContent: "center", marginBottom: 2 }}
-        >
-          {machines.map((machine) => (
-            <Box
-              key={machine.id}
-              sx={{
-                display: "flex",
-                flexDirection: "column",
-                alignItems: "center",
-                marginRight: 3,
-              }}
-            >
-              <Typography level="body-lg">{`${machine.name}`}</Typography>
-              <Typography>{machine.id}</Typography>
-            </Box>
-          ))}
-        </Box>
-
-        {/* New Device Button */}
-
-        {/* Map Section: */}
-        <Box
-          sx={{
-            position: "relative",
-            width: "90%",
-            height: "80vh",
-            display: "flex",
-            flexDirection: "column",
-            alignItems: "center",
-            justifyContent: "center",
-            backgroundColor: "background.level2",
-            borderRadius: "8px",
-            boxShadow: "0 4px 12px rgba(0,0,0,0.2)",
+    <Stack alignItems="center" alignContent="center" justifyContent="center">
+      <Typography level="h4" sx={{ marginTop: 1 }}>
+        Kaapelitehdas
+      </Typography>
+      <Typography sx={{ marginBottom: 0 }}>Press to open info</Typography>
+      <div style={{ position: "relative", display: "inline-block" }}>
+        <img
+          ref={imageRef}
+          src={map_image}
+          alt="Map"
+          style={{
+            maxHeight: 500,
+            display: "block",
           }}
-        >
-          <Typography level="h4" sx={{ marginTop: 1 }}>
-            Kaapelitehdas
-          </Typography>
-          <Typography sx={{ marginBottom: 0 }}>Press to open info</Typography>
+          onClick={(e) => {
+            const rect = imageRef.current?.getBoundingClientRect();
+            dispatch(
+              addItem({
+                x: (e.clientX - rect.left) / rect.width,
+                y: (e.clientY - rect.top) / rect.height,
+                floor: 1,
+                visits: [],
+              })
+            );
+          }}
+        />
 
-          {/* Map Image Box */}
-          <Box
-            sx={{
-              width: "90%",
-              height: "90%",
-              backgroundImage: `url(${map_image})`,
-              backgroundSize: "contain",
-              backgroundRepeat: "no-repeat",
-              backgroundPosition: "center",
-              borderRadius: "8px",
+        {/* Map over items and render circles */}
+        {items.map((item) => (
+          <div
+            key={item.id}
+            onMouseEnter={(e) => handleMenuOpen(e, item)}
+            onMouseLeave={handleMenuClose}
+            style={{
+              position: "absolute",
+              top: `${item.y * 100}%`,
+              left: `${item.x * 100}%`,
+              transform: "translate(-50%, -50%)",
+              width: "20px",
+              height: "20px",
+              borderRadius: "50%",
+              backgroundColor: "rgba(255, 0, 0, 0.5)",
+              cursor: "pointer",
             }}
           />
-
-          {/* Machine Icons on Map */}
-          {machines.map((machine) => (
-            <Tooltip key={machine.id} title={machine.name}>
-              <IconButton
-                onClick={() => handleMachineClick(machine)}
-                sx={{
-                  position: "absolute",
-                  top: machine.y,
-                  left: machine.x,
-                  borderRadius: "50%",
-                  width: 40,
-                  height: 40,
-                  transform: "translate(-50%, -50%)",
-                  backgroundColor:
-                    activeMachineId === machine.id ? "green" : "red",
-                  boxShadow: "0 0 10px rgba(0,0,0,0.3)",
-                }}
-              >
-                <Typography sx={{ fontWeight: "bold", color: "white" }}>
-                  {machine.id}
-                </Typography>
-              </IconButton>
-            </Tooltip>
-          ))}
-          <Button
-            onClick={() => navigate("/adddevice")}
-            sx={{
-              backgroundColor: "gray",
-              color: "white",
-              margin: 1,
-              "&:hover": {
-                backgroundColor: "darkgray",
-              },
-            }}
+        ))}
+        <Menu
+          anchorEl={menuAnchorEl}
+          open={Boolean(menuAnchorEl)}
+          onClose={handleMenuClose}
+          placement="bottom-start"
+          disableAutoFocus
+          disableEnforceFocus
+        >
+          <MenuItem onClick={() => navigate(`/item/${selectedItem?.id}`)}>
+            View Details
+          </MenuItem>
+          <MenuItem onClick={() => console.log("Edit item", selectedItem?.id)}>
+            Edit
+          </MenuItem>
+          <MenuItem
+            onClick={() => console.log("Delete item", selectedItem?.id)}
           >
-            Add a Device
-          </Button>
-        </Box>
-
-        {/* Modal for Machine Info */}
-        <Modal open={openModal} onClose={handleCloseModal}>
-          <Box
-            sx={{
-              position: "absolute",
-              top: "50%",
-              left: "50%",
-              transform: "translate(-50%, -50%)",
-              backgroundColor: "background.level1",
-              padding: 3,
-              borderRadius: 2,
-              boxShadow: 24,
-              maxWidth: 400,
-              width: "90%",
-            }}
-          >
-            <Typography level="body-sm">{selectedMachine?.name}</Typography>
-            <Typography>ID: {selectedMachine?.id}</Typography>
-            <Typography>
-              Coordinates: ({selectedMachine?.x}, {selectedMachine?.y})
-            </Typography>
-            <Button onClick={handleCloseModal} sx={{ marginTop: 2 }}>
-              Close
-            </Button>
-          </Box>
-        </Modal>
-      </Box>
-    </CssVarsProvider>
+            Delete
+          </MenuItem>
+        </Menu>
+      </div>
+      <Button onClick={() => navigate("/adddevice")} color="primary">
+        Add a Device
+      </Button>
+    </Stack>
   );
 }
