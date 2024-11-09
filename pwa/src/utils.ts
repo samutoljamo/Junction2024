@@ -5,52 +5,70 @@
  * @param lat - The latitude of the point to transform.
  * @param lon - The longitude of the point to transform.
  * @returns An object containing the normalized coordinates x and y.
- */
-export function gpsToNormalized(
+ */ export function gpsToNormalized(
   lat: number,
   lon: number
 ): { x: number; y: number } {
-    const R = { y: lat, x: lon };
-    const top_left = { y: 60.162410, x: 24.905575 } // Top-left corner
-    const top_right = { y: 60.161860, x: 24.905884 } // Top-right corner
-    const bottom_right = { y: 60.161362, x: 24.902548 } // Bottom-right corner
-    const bottom_left = { y: 60.161887, x: 24.902215 }  // Bottom-left corner
+  const topLeft = { lat: 60.16241, lon: 24.905575 };
+  const topRight = { lat: 60.16186, lon: 24.905884 };
+  const bottomRight = { lat: 60.161362, lon: 24.902548 };
+  const bottomLeft = { lat: 60.161887, lon: 24.902215 };
 
-    const projected_on_the_y = closestPointOnLine(top_left, bottom_left, R);
-    const projected_on_the_x = closestPointOnLine(top_left, top_right, R);
+  // Define vectors for the edges of the quadrilateral
+  const leftVector = [
+    bottomLeft.lat - topLeft.lat,
+    bottomLeft.lon - topLeft.lon,
+  ];
+  const rightVector = [
+    bottomRight.lat - topRight.lat,
+    bottomRight.lon - topRight.lon,
+  ];
+  const topVector = [topRight.lat - topLeft.lat, topRight.lon - topLeft.lon];
+  const bottomVector = [
+    bottomRight.lat - bottomLeft.lat,
+    bottomRight.lon - bottomLeft.lon,
+  ];
 
-    const y = Math.sqrt((projected_on_the_y.x - top_left.x) ** 2 + (projected_on_the_y.y - top_left.y) ** 2) / Math.sqrt((bottom_left.x - top_left.x) ** 2 + (bottom_left.y - top_left.y) ** 2);
-    const x = Math.sqrt((projected_on_the_x.x - top_left.x) ** 2 + (projected_on_the_x.y - top_left.y) ** 2) / Math.sqrt((top_right.x - top_left.x) ** 2 + (top_right.y - top_left.y) ** 2);
+  // Calculate position relative to top-left corner
+  const gpsVector = [lat - topLeft.lat, lon - topLeft.lon];
 
-    return { x, y };
+  // Solve for u (horizontal) using top and bottom vectors
+  const A_top = [
+    [topVector[0], -leftVector[0]],
+    [topVector[1], -leftVector[1]],
+  ];
+  const A_bottom = [
+    [bottomVector[0], -rightVector[0]],
+    [bottomVector[1], -rightVector[1]],
+  ];
+
+  const u_top = solveLeastSquares(A_top, gpsVector)[0];
+  const u_bottom = solveLeastSquares(A_bottom, gpsVector)[0];
+  let u = (u_top + u_bottom) / 2; // Average for best estimate
+
+  // Solve for v (vertical) using left and right vectors
+  const leftGps = u * leftVector[0] + u * leftVector[1];
+  let v = dot(gpsVector, leftVector) / dot(leftVector, leftVector);
+
+  // Clamp u and v to the range [0, 1]
+  u = Math.max(0, Math.min(1, u));
+  v = Math.max(0, Math.min(1, v));
+
+  return { x: u, y: v };
 }
 
-interface Point {
-    x: number;
-    y: number;
+// Helper function for dot product
+function dot(v1: number[], v2: number[]): number {
+  return v1[0] * v2[0] + v1[1] * v2[1];
 }
 
-function closestPointOnLine(P: Point, Q: Point, R: Point): Point {
-    // Calculate vector PQ
-    const PQ = { x: Q.x - P.x, y: Q.y - P.y };
-
-    // Calculate vector PR
-    const PR = { x: R.x - P.x, y: R.y - P.y };
-
-    // Compute the dot products
-    const dotProduct = PQ.x * PR.x + PQ.y * PR.y;
-    const lengthSquared = PQ.x * PQ.x + PQ.y * PQ.y;
-
-    // Compute the scalar projection t
-    const t = dotProduct / lengthSquared;
-
-    // Compute the closest point S = P + t * PQ
-    const S = {
-        x: P.x + t * PQ.x,
-        y: P.y + t * PQ.y
-    };
-
-    return S;
+// Helper function for solving least squares (similar to np.linalg.lstsq)
+function solveLeastSquares(A: number[][], b: number[]): number[] {
+  const [a, b1] = A[0];
+  const [c, d] = A[1];
+  const det = a * d - b1 * c;
+  if (Math.abs(det) < 1e-10) return [0, 0]; // Handle potential divide by zero
+  const x = (d * b[0] - b1 * b[1]) / det;
+  const y = (-c * b[0] + a * b[1]) / det;
+  return [x, y];
 }
-
-

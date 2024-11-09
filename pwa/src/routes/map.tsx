@@ -1,4 +1,4 @@
-import React, { useState, useRef } from "react";
+import React, { useState, useRef, useEffect } from "react";
 import { CssVarsProvider } from "@mui/joy/styles";
 import {
   Box,
@@ -19,6 +19,7 @@ import { useNavigate } from "react-router-dom";
 import { useAppDispatch, useAppSelector } from "../store";
 import { addItem } from "../store/backendSlice";
 import { resetForm } from "../store/formSlice";
+import { gpsToNormalized } from "../utils";
 
 export default function Root() {
   const navigate = useNavigate();
@@ -47,6 +48,21 @@ export default function Root() {
     handleMenuClose();
     action();
   };
+  const [coords, setCoords] = useState<{
+    x: number;
+    y: number;
+  } | null>(null);
+
+  useEffect(() => {
+    navigator.geolocation.getCurrentPosition((pos) => {
+      const localized = gpsToNormalized(
+        pos.coords.latitude,
+        pos.coords.longitude
+      );
+      console.log(localized);
+      setCoords(localized);
+    });
+  }, []);
 
   return (
     <Stack alignItems="center" alignContent="center" justifyContent="center">
@@ -85,12 +101,26 @@ export default function Root() {
               transform: "translate(-50%, -50%)",
               width: "20px",
               height: "20px",
-              borderRadius: "50%",
               backgroundColor: "rgba(255, 0, 0, 0.5)",
               cursor: "pointer",
             }}
           />
         ))}
+        {coords && (
+          <div
+            style={{
+              position: "absolute",
+              top: `${coords.y * 100}%`,
+              left: `${coords.x * 100}%`,
+              transform: "translate(-50%, -50%)",
+              width: "20px",
+              height: "20px",
+              borderRadius: "50%",
+              backgroundColor: "#3C48C9",
+              cursor: "pointer",
+            }}
+          />
+        )}
         <Menu
           anchorEl={menuAnchorEl}
           open={Boolean(menuAnchorEl)}

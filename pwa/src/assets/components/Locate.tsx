@@ -21,6 +21,7 @@ export default function Locate() {
         pos.coords.latitude,
         pos.coords.longitude
       );
+      console.log(localized);
       setCoords(localized);
     });
   }, []);
