@@ -197,15 +197,13 @@ export default function SerialNumberModel() {
             onChange={(e) => dispatch(setFreeComment(e.target.value))}
           />
         </FormControl>
-        <ButtonGroup spacing="9.5rem" aria-label="spacing button group">
-          <Button
-            onClick={function () {
-              navigate("/locate");
-            }}
-          >
-            Back
-          </Button>
-          <Button
+        <ButtonGroup spacing="15px" aria-label="spacing button group">
+          <Button style={{
+          backgroundColor: "#542DAE",
+          fontWeight: "400",
+          boxShadow: "1px 2px 4px 0 rgba(0,0,0,0.35)",
+          borderRadius: "10px"
+        }}
             onClick={function () {
               dispatch(
                 addItem({
@@ -225,6 +223,13 @@ export default function SerialNumberModel() {
             color="success"
           >
             Add device
+          </Button>
+          <Button
+            onClick={function () {
+              navigate("/locate");
+            }}
+          >
+            Back
           </Button>
         </ButtonGroup>
       </Sheet>
