@@ -13,10 +13,9 @@ import {
 } from "../formSlice";
 
 export function useFormFill() {
-  const [uploadImage, { data }] = useUploadImageUploadPostMutation();
+  const [uploadImage, { data, isLoading}] = useUploadImageUploadPostMutation();
   const images = useAppSelector((state) => state.form.images);
   const dispatch = useAppDispatch();
-
   useEffect(() => {
     console.log(data);
     if (data?.equipment_name) {
@@ -47,13 +46,16 @@ export function useFormFill() {
     }
   }, [data]);
 
-  return function () {
-    if (images.length > 0) {
-      uploadImage({
-        imageUpload: {
-          images: images.map((img) => img.data),
-        },
-      });
-    }
-  };
+  return {
+    fillForm: function () {
+      if (images.length > 0) {
+        uploadImage({
+          imageUpload: {
+            images: images.map((img) => img.data),
+          },
+        });
+      }
+    },
+    isLoading
+  }
 }
