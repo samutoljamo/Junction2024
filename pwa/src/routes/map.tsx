@@ -53,7 +53,9 @@ export default function Root() {
       <Typography level="h4" sx={{ marginTop: 1 }}>
         Kaapelitehdas
       </Typography>
-      <Typography sx={{ marginBottom: 0 }}>Press to open info</Typography>
+      <Typography sx={{ marginBottom: 0 }}>
+        Click the red dots(Items) or add a new device
+      </Typography>
       <div style={{ position: "relative", display: "inline-block" }}>
         <img
           ref={imageRef}
@@ -63,34 +65,7 @@ export default function Root() {
             maxHeight: 500,
             display: "block",
           }}
-          onClick={(e) => {
-            if (menuAnchorEl) {
-              handleMenuClose();
-              return;
-            }
-            const rect = imageRef.current?.getBoundingClientRect();
-            dispatch(
-              addItem({
-                x: (e.clientX - rect.left) / rect.width,
-                y: (e.clientY - rect.top) / rect.height,
-                floor: 1,
-                visits: [        {
-                  condition: "good",
-                  notes: "Stunning",
-                  createdAt: new Date(2024, 11, 8).toLocaleDateString(),
-                  surveyor: "Mike J",
-                },
-                {
-                  condition: "horrible",
-                  notes: "Very bad",
-                  createdAt: new Date(2024, 3, 2).toLocaleDateString(),
-                  surveyor: "Jake L",
-                },],
-              })
-            );
-          }}
         />
-
         {/* Map over items and render circles */}
         {items.map((item) => (
           <div
@@ -116,14 +91,28 @@ export default function Root() {
           onClose={handleMenuClose}
           placement="bottom-start"
         >
-          <MenuItem onClick={() => handleMenuItemClick(() => navigate(`/item/${selectedItem?.id}`))}>
+          <MenuItem
+            onClick={() =>
+              handleMenuItemClick(() => navigate(`/item/${selectedItem?.id}`))
+            }
+          >
             Add new visit
           </MenuItem>
-          <MenuItem onClick={() => handleMenuItemClick(() => navigate(`/previous-visits/${selectedItem?.id}`))}>
+          <MenuItem
+            onClick={() =>
+              handleMenuItemClick(() =>
+                navigate(`/previous-visits/${selectedItem?.id}`)
+              )
+            }
+          >
             View previous visits
           </MenuItem>
           <MenuItem
-            onClick={() => handleMenuItemClick(() => console.log("Delete item", selectedItem?.id))}
+            onClick={() =>
+              handleMenuItemClick(() =>
+                console.log("Delete item", selectedItem?.id)
+              )
+            }
           >
             Replace device
           </MenuItem>
