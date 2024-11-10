@@ -129,6 +129,7 @@ export const backendSlice = createSlice({
 });
 
 // Action creators are generated for each case reducer function
-export const { addItem, addPicture, addVisit } = backendSlice.actions;
+export const { addItem, addPicture, addVisit, removeItem } =
+  backendSlice.actions;
 
 export default backendSlice.reducer;

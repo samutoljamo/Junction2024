@@ -17,7 +17,7 @@ import map_image from "../assets/kaapelitehdas_ifc_from_top 1.png";
 import CameraView from "../assets/components/CameraView";
 import { useNavigate } from "react-router-dom";
 import { useAppDispatch, useAppSelector } from "../store";
-import { addItem } from "../store/backendSlice";
+import { addItem, removeItem } from "../store/backendSlice";
 import { resetForm } from "../store/formSlice";
 import { gpsToNormalized } from "../utils";
 
@@ -69,36 +69,39 @@ export default function Root() {
       <Typography level="h4" sx={{ marginTop: 1 }}>
         Kaapelitehdas
       </Typography>
-      <Box sx={{ display: 'flex', gap: 1, padding: 2, flexDirection: 'column' }}>
-        <Box sx={{ display: 'flex', alignItems: 'center', gap: 1 }}>
-          <Box 
-            sx={{ 
+      <Box
+        sx={{ display: "flex", gap: 1, padding: 2, flexDirection: "column" }}
+      >
+        <Box sx={{ display: "flex", alignItems: "center", gap: 1 }}>
+          <Box
+            sx={{
               width: 12,
               height: 12,
-              borderRadius: '50%',
-              backgroundColor: 'rgb(60, 72, 201)',
-            }} 
+              borderRadius: "50%",
+              backgroundColor: "rgb(60, 72, 201)",
+            }}
           />
-        <Typography>Your Location</Typography>
-      </Box>
-      <Box sx={{ display: 'flex', alignItems: 'center', gap: 1 }}>
-        <Box 
-          sx={{ 
-            width: 12,
-            height: 12,
-            backgroundColor: 'rgba(255, 0, 0, 0.5)',
-          }} 
-        />
-        <Typography>Device (clickable)</Typography>
+          <Typography>Your Location</Typography>
+        </Box>
+        <Box sx={{ display: "flex", alignItems: "center", gap: 1 }}>
+          <Box
+            sx={{
+              width: 12,
+              height: 12,
+              backgroundColor: "rgba(255, 0, 0, 0.5)",
+            }}
+          />
+          <Typography>Device (clickable)</Typography>
         </Box>
       </Box>
-      <div style={{ position: "relative", display: "inline-block" }}
-      onClick={() => {
-        if (menuAnchorEl) {
-          handleMenuClose();
-        }}}
-        >
-
+      <div
+        style={{ position: "relative", display: "inline-block" }}
+        onClick={() => {
+          if (menuAnchorEl) {
+            handleMenuClose();
+          }
+        }}
+      >
         <img
           ref={imageRef}
           src={map_image}
@@ -149,7 +152,9 @@ export default function Root() {
         >
           <MenuItem
             onClick={() =>
-              handleMenuItemClick(() => navigate(`/new-visit/${selectedItem?.id}`))
+              handleMenuItemClick(() =>
+                navigate(`/new-visit/${selectedItem?.id}`)
+              )
             }
           >
             Add new visit
@@ -165,15 +170,12 @@ export default function Root() {
           </MenuItem>
           <MenuItem
             onClick={() =>
-              handleMenuItemClick(() =>
-                console.log("Delete item", selectedItem?.id)
-              )
+              handleMenuItemClick(() => dispatch(removeItem(selectedItem?.id)))
             }
           >
-            Replace device
+            Remove device
           </MenuItem>
         </Menu>
-          
       </div>
       <Button
         style={{
@@ -181,7 +183,7 @@ export default function Root() {
           fontWeight: "400",
           marginTop: "15px",
           boxShadow: "1px 2px 4px 0 rgba(0,0,0,0.35)",
-          borderRadius: "10px"
+          borderRadius: "10px",
         }}
         onClick={() => {
           dispatch(resetForm());
