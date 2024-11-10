@@ -54,7 +54,7 @@ export default function Root() {
   } | null>(null);
 
   useEffect(() => {
-    navigator.geolocation.getCurrentPosition((pos) => {
+    navigator.geolocation.watchPosition((pos) => {
       const localized = gpsToNormalized(
         pos.coords.latitude,
         pos.coords.longitude
