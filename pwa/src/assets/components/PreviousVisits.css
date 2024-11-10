@@ -1,27 +1,25 @@
-#root{
-    padding:15px;
-    background-color:#F4F4FE;
+#root {
+  padding: 15px;
+  background-color: #f4f4fe;
 }
 
-.visits-list{
-    display:flex;
-    flex-direction:column;
-    row-gap:20px;
+.visits-list {
+  display: flex;
+  flex-direction: column;
+  row-gap: 20px;
 }
 
-.visit-card{
-    display:flex;
-    flex-direction:column;
-    padding: 15px;
-    background-color:#E8E8F3;
-    box-shadow: 1px 2px 5px 0 rgba(0,0,0,0.15);
+.visit-card {
+  display: flex;
+  flex-direction: column;
+  flex-grow: 1;
 }
 
-.visit-card__row:not(:last-child){
-    border-bottom: 2px solid #DFE0E1;
+.visit-card__row:not(:last-child) {
+  border-bottom: 2px solid #dfe0e1;
 }
 
-.visit-card__row{
-    display:flex;
-    justify-content: space-between;
+.visit-card__row {
+  display: flex;
+  justify-content: space-between;
 }

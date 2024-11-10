@@ -91,7 +91,9 @@ export const formSlice = createSlice({
       state.floor = action.payload;
     },
     resetForm: (state) => {
-      state = initialState;
+      for (const key of Object.keys(initialState)) {
+        state[key] = initialState[key];
+      }
     },
   },
 });

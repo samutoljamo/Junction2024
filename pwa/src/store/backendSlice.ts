@@ -15,13 +15,18 @@ interface AddVisitPayload {
     notes: string;
     createdAt: string;
     surveyor: string;
-  }
+  };
+}
+
+interface Picture {
+  data: string;
+  id: string;
 }
 
 interface ModifyItemPayload {
   itemId: string;
-  attribute: keyof Omit<Item, 'id' | 'visits'>;  // all item attributes except id and visits
-  value: string | number;  // the new value for the attribute
+  attribute: keyof Omit<Item, "id" | "visits">; // all item attributes except id and visits
+  value: string | number; // the new value for the attribute
 }
 
 export interface Item {
@@ -37,6 +42,7 @@ export interface Item {
   size?: string;
   material?: string;
   manufacturingYear?: number;
+  pictures: Picture[];
   visits: Visit[];
 }
 
@@ -56,6 +62,7 @@ const initialState: BackendSlice = {
       model: "model",
       manufacturer: "dsffds",
       equipmentName: "Heating device",
+      pictures: [],
       visits: [
         {
           condition: "good",
@@ -88,20 +95,40 @@ export const backendSlice = createSlice({
       state.items = state.items.filter((item) => item.id !== action.payload);
     },
     addVisit: (state, action: PayloadAction<AddVisitPayload>) => {
-      const item = state.items.find(item => item.id === action.payload.itemId);
+      const item = state.items.find(
+        (item) => item.id === action.payload.itemId
+      );
       if (item) {
         item.visits.push(action.payload.visit);
-      }},
+      }
+    },
     modifyItem: (state, action: PayloadAction<ModifyItemPayload>) => {
-      const item = state.items.find(item => item.id === action.payload.itemId);
+      const item = state.items.find(
+        (item) => item.id === action.payload.itemId
+      );
       if (item) {
         (item as any)[action.payload.attribute] = action.payload.value;
       }
-    }
+    },
+    addPicture: (
+      state,
+      action: PayloadAction<{
+        id: string;
+        data: string;
+      }>
+    ) => {
+      const item = state.items.find((item) => item.id === action.payload.id);
+      if (item) {
+        item.pictures.push({
+          data: action.payload.data,
+          id: uuidv4(),
+        });
+      }
+    },
   },
 });
 
 // Action creators are generated for each case reducer function
-export const { addItem, addVisit } = backendSlice.actions;
+export const { addItem, addPicture, addVisit } = backendSlice.actions;
 
 export default backendSlice.reducer;

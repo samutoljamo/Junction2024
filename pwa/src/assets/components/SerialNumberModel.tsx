@@ -13,6 +13,7 @@ import { Option } from "@mui/joy";
 import { useNavigate } from "react-router-dom";
 import CircularProgress from "@mui/joy/CircularProgress";
 import Stack from "@mui/joy/Stack";
+import { v4 as uuidv4 } from "uuid";
 
 import {
   setEquipmentName,
@@ -25,11 +26,12 @@ import {
   setMaterial,
   setCondition,
   setFreeComment,
+  addImage,
 } from "../../store/formSlice";
 
 import { useAppSelector } from "../../store";
 import { useFormFill } from "../../hooks";
-import { addItem } from "../../store/backendSlice";
+import { addItem, addPicture } from "../../store/backendSlice";
 
 export default function SerialNumberModel() {
   const navigate = useNavigate();
@@ -198,12 +200,13 @@ export default function SerialNumberModel() {
           />
         </FormControl>
         <ButtonGroup spacing="15px" aria-label="spacing button group">
-          <Button style={{
-          backgroundColor: "#542DAE",
-          fontWeight: "400",
-          boxShadow: "1px 2px 4px 0 rgba(0,0,0,0.35)",
-          borderRadius: "10px"
-        }}
+          <Button
+            style={{
+              backgroundColor: "#542DAE",
+              fontWeight: "400",
+              boxShadow: "1px 2px 4px 0 rgba(0,0,0,0.35)",
+              borderRadius: "10px",
+            }}
             onClick={function () {
               dispatch(
                 addItem({
@@ -212,9 +215,14 @@ export default function SerialNumberModel() {
                     {
                       condition: form.condition,
                       notes: form.freeComment,
-                      createdAt: new Date().toISOString(),
+                      createdAt: new Date().toLocaleDateString(),
+                      surveyor: "Someone",
                     },
                   ],
+                  pictures: form.images.map((image) => ({
+                    id: uuidv4(),
+                    data: image.data,
+                  })),
                 })
               );
               navigate("/");
