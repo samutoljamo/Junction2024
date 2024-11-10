@@ -81,7 +81,7 @@ async def extract_item_info_from_images(base64_str_images: list[str]) -> ItemStr
             messages=[
                 {
                     "role": "system",
-                    "content": "You are a system that always extracts information from images. If some information is not visible in the image, leave it as None.",
+                    "content": "You are a system that always extracts information from images. If some information is not visible in the image, leave it as None. DO NOT SAY UNKNOWN or N/A. DO NOT SAY UNKNOWN or N/A. DO NOT SAY UNKNOWN or N/A.",
                     "role": "user",
                     "content": content
                 }
@@ -93,7 +93,7 @@ async def extract_item_info_from_images(base64_str_images: list[str]) -> ItemStr
         raise HTTPException(status_code=500, detail=f"Vision API error: {str(e)}")
 
 client = instructor.from_openai(OpenAI(api_key=os.getenv("OPENAI_API_KEY")))
-model = "gpt-4o-mini"
+model = "gpt-4o"
 
 
 
