@@ -149,7 +149,7 @@ export default function Root() {
         >
           <MenuItem
             onClick={() =>
-              handleMenuItemClick(() => navigate(`/item/${selectedItem?.id}`))
+              handleMenuItemClick(() => navigate(`/new-visit/${selectedItem?.id}`))
             }
           >
             Add new visit

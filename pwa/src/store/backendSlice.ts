@@ -18,6 +18,12 @@ interface AddVisitPayload {
   }
 }
 
+interface ModifyItemPayload {
+  itemId: string;
+  attribute: keyof Omit<Item, 'id' | 'visits'>;  // all item attributes except id and visits
+  value: string | number;  // the new value for the attribute
+}
+
 export interface Item {
   id: string;
   equipmentName: string;
@@ -49,7 +55,7 @@ const initialState: BackendSlice = {
       material: "material",
       model: "model",
       manufacturer: "dsffds",
-      equipmentName: "useless",
+      equipmentName: "Heating device",
       visits: [
         {
           condition: "good",
@@ -85,11 +91,17 @@ export const backendSlice = createSlice({
       const item = state.items.find(item => item.id === action.payload.itemId);
       if (item) {
         item.visits.push(action.payload.visit);
-      }}
+      }},
+    modifyItem: (state, action: PayloadAction<ModifyItemPayload>) => {
+      const item = state.items.find(item => item.id === action.payload.itemId);
+      if (item) {
+        (item as any)[action.payload.attribute] = action.payload.value;
+      }
+    }
   },
 });
 
 // Action creators are generated for each case reducer function
-export const { addItem } = backendSlice.actions;
+export const { addItem, addVisit } = backendSlice.actions;
 
 export default backendSlice.reducer;
