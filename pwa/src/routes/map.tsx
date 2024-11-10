@@ -17,7 +17,7 @@ import map_image from "../assets/kaapelitehdas_ifc_from_top 1.png";
 import CameraView from "../assets/components/CameraView";
 import { useNavigate } from "react-router-dom";
 import { useAppDispatch, useAppSelector } from "../store";
-import { addItem, removeItem } from "../store/backendSlice";
+import { addItem, Item, removeItem } from "../store/backendSlice";
 import { resetForm } from "../store/formSlice";
 import { gpsToNormalized } from "../utils";
 
@@ -31,9 +31,9 @@ export default function Root() {
   const items = useAppSelector((state) => state.backend.items);
 
   const [menuAnchorEl, setMenuAnchorEl] = useState(null);
-  const [selectedItem, setSelectedItem] = useState(null);
+  const [selectedItem, setSelectedItem] = useState<Item | null>(null);
 
-  const handleMenuOpen = (event: any, item: any) => {
+  const handleMenuOpen = (event: any, item: Item) => {
     event.stopPropagation();
     setMenuAnchorEl(event.currentTarget);
     setSelectedItem(item);
@@ -103,7 +103,7 @@ export default function Root() {
         }}
       >
         <img
-          ref={imageRef}
+          ref={imageRef as any}
           src={map_image}
           alt="Map"
           style={{
@@ -170,7 +170,11 @@ export default function Root() {
           </MenuItem>
           <MenuItem
             onClick={() =>
-              handleMenuItemClick(() => dispatch(removeItem(selectedItem?.id)))
+              handleMenuItemClick(() => {
+                if (selectedItem) {
+                  dispatch(removeItem(selectedItem?.id));
+                }
+              })
             }
           >
             Remove device

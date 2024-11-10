@@ -92,7 +92,7 @@ export const formSlice = createSlice({
     },
     resetForm: (state) => {
       for (const key of Object.keys(initialState)) {
-        state[key] = initialState[key];
+        (state as any)[key] = (initialState as any)[key];
       }
     },
   },
