@@ -1,5 +1,10 @@
 # Junction-2024
 https://joint-sadly-shrimp.ngrok-free.app
+
+https://github.com/user-attachments/assets/91d7b218-2ed8-4272-898d-2ad8bcf46230
+
+https://youtu.be/nxYxOwzgYy8
+
 ## Problem overview
 Challenge Name: Modernizing a Trillion-Euro Inventory
 Challenge Tagline: Empower the Built World with AI and Create the Ultimate Digital Twin
